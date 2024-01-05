@@ -30,6 +30,7 @@ def main():
 
     with open("deps.json", "w", encoding="utf-8") as json_file:
         json.dump(catalog, json_file, indent=4, sort_keys=True, cls=CatalogEncoder)
+        json_file.write("\n")
 
     with open("deps.json", "r", encoding="utf-8") as json_file:
         result = json.load(json_file, object_hook=catalog_hook)

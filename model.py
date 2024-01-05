@@ -1,6 +1,6 @@
 """Data structures for curriculum design"""
 from dataclasses import dataclass
-from typing import Dict, List, Set
+from typing import Dict, Iterable, List, Optional, Set, Tuple
 from networkx import chordless_cycles, transitive_reduction, DiGraph
 
 
@@ -88,3 +88,85 @@ class Catalog:
         if cycles:
             return cycles
         return transitive_reduction(result)
+
+    def add_course(self, dept: str, course_number: str, title: str, creds: int):
+        """Add a course to the catalog. If another course by the same
+        department and course number exists, replace it."""
+        c_id = CourseId(dept, course_number)
+        self.courses[c_id] = Course(c_id, title, creds)
+
+    @staticmethod
+    def _get_objective(obj: str | Objective) -> Objective:
+        match obj:
+            case str():
+                return Objective(obj)
+            case Objective():
+                return obj
+            case _:
+                raise TypeError(f"Cannot make an Objective from {obj}")
+
+    @staticmethod
+    def _get_program(program: str | ProgramId) -> ProgramId:
+        match program:
+            case str():
+                return ProgramId(program)
+            case ProgramId():
+                return program
+            case _:
+                raise TypeError(f"Cannot make a ProgramId from {program}")
+
+    @staticmethod
+    def _get_course(course: str | Tuple[str, str] | CourseId) -> CourseId:
+        match course:
+            case str(name):
+                values = name.split()
+                assert len(values) == 2
+                (dept, course_number) = values
+                return CourseId(dept, course_number)
+            case (str(dept), str(course_number)):
+                return CourseId(dept, course_number)
+            case CourseId():
+                return course
+            case _:
+                raise TypeError(f"Cannot make a CourseId from {course}")
+
+    def add_objective(
+        self, obj: str | Objective, course: str | Tuple[str, str] | CourseId
+    ):
+        """Add an objective to the catalog and associate it with `course`.
+        If the objective is already in the catalog, update it to belong to
+        `course`."""
+        course_id = Catalog._get_course(course)
+        obj = Catalog._get_objective(obj)
+        self.objectives.add(obj)
+        self.course_objectives[obj] = course_id
+
+    def obj_depends(self, from_obj: str | Objective, to_obj: str | Objective):
+        """Add a dependency between two objectives. Both objectives must
+        already be in the catalog."""
+        from_obj = Catalog._get_objective(from_obj)
+        to_obj = Catalog._get_objective(to_obj)
+        assert from_obj in self.objectives and to_obj in self.objectives
+        self.objective_deps.setdefault(from_obj, set()).add(to_obj)
+
+    def add_program(
+        self,
+        name: str | ProgramId,
+        courses: Optional[Iterable[str | Tuple[str, str] | CourseId]] = None,
+    ):
+        """Add a program to the catalog. Courses may optionally be specified
+        that pertain to the program."""
+        c_ids: Set[CourseId] = set()
+        if courses is not None:
+            c_ids = set(map(Catalog._get_course, courses))
+        p_id = Catalog._get_program(name)
+        self.programs[p_id] = Program(p_id, c_ids)
+
+    def add_course_to_program(
+        self, name: str | ProgramId, course: str | Tuple[str, str] | CourseId
+    ):
+        """Add a course to the specified program. If no such program exists in
+        the catalog, create it."""
+        p_id = Catalog._get_program(name)
+        c_id = Catalog._get_course(course)
+        self.programs.setdefault(p_id, Program(p_id, set())).courses.add(c_id)
