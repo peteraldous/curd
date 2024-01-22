@@ -2,7 +2,7 @@
 import json
 import sys
 
-from model import Catalog, Course, CourseId, Limits, Objective, Program, ProgramId
+from model import Catalog, Course, CourseId, Limits, Requirement, Program, ProgramId
 
 
 class CatalogEncoder(json.JSONEncoder):
@@ -12,10 +12,10 @@ class CatalogEncoder(json.JSONEncoder):
         if isinstance(o, Catalog):
             return {
                 "__Catalog__": True,
-                "objectives": [obj.name for obj in o.objectives],
-                "obj_deps": {
-                    from_obj.name: [to_obj.name for to_obj in to_objs]
-                    for (from_obj, to_objs) in o.objective_deps.items()
+                "requirements": [req.name for req in o.requirements],
+                "req_deps": {
+                    from_req.name: [to_req.name for to_req in to_reqs]
+                    for (from_req, to_reqs) in o.requirement_deps.items()
                 },
                 "courses": [
                     (
@@ -26,17 +26,16 @@ class CatalogEncoder(json.JSONEncoder):
                     )
                     for course in o.courses.values()
                 ],
-                "course_objs": {
-                    obj.name: (course.dept, course.course_number)
-                    for (obj, course) in o.course_objectives.items()
+                "course_reqs": {
+                    req.name: [
+                        (course.dept, course.course_number) for course in courses
+                    ]
+                    for (req, courses) in o.course_requirements.items()
                 },
                 "programs": [
                     (
                         program.p_id.name,
-                        [
-                            (course.dept, course.course_number)
-                            for course in program.courses
-                        ],
+                        [requirement.name for requirement in program.requirements],
                     )
                     for program in o.programs.values()
                 ],
@@ -52,29 +51,33 @@ def catalog_hook(dct):
 
     if "__Catalog__" in dct:
         try:
-            objectives = {Objective(obj) for obj in dct["objectives"]}
-            obj_deps = {
-                Objective(from_name): {Objective(to_name) for to_name in to_names}
-                for (from_name, to_names) in dct["obj_deps"].items()
+            requirements = {Requirement(req) for req in dct["requirements"]}
+            req_deps = {
+                Requirement(from_name): {Requirement(to_name) for to_name in to_names}
+                for (from_name, to_names) in dct["req_deps"].items()
             }
             courses = {}
             for (dept, number, title, creds) in dct["courses"]:
                 c_id = CourseId(dept, number)
                 courses[c_id] = Course(c_id, title, creds)
-            course_objs = {
-                Objective(obj_name): CourseId(dept, number)
-                for (obj_name, (dept, number)) in dct["course_objs"].items()
+            course_reqs = {
+                Requirement(req_name): {
+                    CourseId(dept, number) for (dept, number) in courses
+                }
+                for (req_name, courses) in dct["course_reqs"].items()
             }
             programs = {}
-            for (name, courses) in dct["programs"]:
+            for (name, requirements) in dct["programs"]:
                 p_id = ProgramId(name)
                 programs[p_id] = Program(
-                    p_id, {CourseId(dept, number) for (dept, number) in courses}
+                    p_id, {Requirement(name) for name in requirements}
                 )
             limits = Limits(
                 dct["program_credit_limit"], dct["term_credit_limit"], dct["term_limit"]
             )
-            return Catalog(objectives, obj_deps, courses, course_objs, programs, limits)
+            return Catalog(
+                requirements, req_deps, courses, course_reqs, programs, limits
+            )
         except IndexError as index_error:
             sys.stderr.print(f"Unable to read a Catalog from json: {index_error}")
     return dct

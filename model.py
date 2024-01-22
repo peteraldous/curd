@@ -5,8 +5,8 @@ from networkx import chordless_cycles, transitive_reduction, DiGraph
 
 
 @dataclass(order=True, frozen=True)
-class Objective:
-    "An objective of a course"
+class Requirement:
+    "An requirement of a course"
 
     name: str
 
@@ -48,10 +48,15 @@ class Program:
     "A degree or emphasis"
 
     p_id: ProgramId
-    courses: Set[CourseId]
+    requirements: Set[Requirement]
+
+    def fits(self, limits: "Limits"):
+        """Determine if the program fits within the specified credit and term
+        limits."""
+        return self is not None and limits is not None
 
 
-@dataclass(order=True)
+@dataclass(order=True, frozen=True)
 class Limits:
     "The limits on credits and terms for a Catalog"
     program_credit_limit: int = 120
@@ -62,10 +67,10 @@ class Limits:
 @dataclass
 class Catalog:
     "A course catalog"
-    objectives: Set[Objective]
-    objective_deps: Dict[Objective, Set[Objective]]
+    requirements: Set[Requirement]
+    requirement_deps: Dict[Requirement, Set[Requirement]]
     courses: Dict[CourseId, Course]
-    course_objectives: Dict[Objective, CourseId]
+    course_requirements: Dict[Requirement, Set[CourseId]]
     programs: Dict[ProgramId, Program]
     limits: Limits
 
@@ -74,16 +79,11 @@ class Catalog:
         If the resulting graph is cyclic, return the cycles as a list of lists
         of course IDs."""
         result: DiGraph = DiGraph()
-        for objective, deps in self.objective_deps.items():
-            if objective in self.course_objectives:
-                from_course = self.course_objectives[objective]
-                to_courses = set()
+        for requirement, deps in self.requirement_deps.items():
+            for from_course in self.course_requirements.get(requirement, set()):
                 for dep in deps:
-                    if dep in self.course_objectives:
-                        to_courses.add(self.course_objectives[dep])
-                result.add_edges_from(
-                    [(from_course, to_course) for to_course in to_courses]
-                )
+                    for to_course in self.course_requirements.get(dep, set()):
+                        result.add_edge(from_course, to_course)
         cycles = sorted(list(chordless_cycles(result)))
         if cycles:
             return cycles
@@ -96,14 +96,14 @@ class Catalog:
         self.courses[c_id] = Course(c_id, title, creds)
 
     @staticmethod
-    def _get_objective(obj: str | Objective) -> Objective:
-        match obj:
+    def _get_requirement(req: str | Requirement) -> Requirement:
+        match req:
             case str():
-                return Objective(obj)
-            case Objective():
-                return obj
+                return Requirement(req)
+            case Requirement():
+                return req
             case _:
-                raise TypeError(f"Cannot make an Objective from {obj}")
+                raise TypeError(f"Cannot make an Requirement from {req}")
 
     @staticmethod
     def _get_program(program: str | ProgramId) -> ProgramId:
@@ -130,43 +130,45 @@ class Catalog:
             case _:
                 raise TypeError(f"Cannot make a CourseId from {course}")
 
-    def add_objective(
-        self, obj: str | Objective, course: str | Tuple[str, str] | CourseId
+    def add_requirement(
+        self,
+        req: str | Requirement,
+        courses: Iterable[str | Tuple[str, str] | CourseId],
     ):
-        """Add an objective to the catalog and associate it with `course`.
-        If the objective is already in the catalog, update it to belong to
-        `course`."""
-        course_id = Catalog._get_course(course)
-        obj = Catalog._get_objective(obj)
-        self.objectives.add(obj)
-        self.course_objectives[obj] = course_id
+        """Add a requirement to the catalog and associate it with each course
+        in `courses`. If the requirement is already in the catalog, add
+        `courses` to it."""
+        course_ids = set(map(Catalog._get_course, courses))
+        req = Catalog._get_requirement(req)
+        self.requirements.add(req)
+        self.course_requirements.setdefault(req, set()).update(course_ids)
 
-    def obj_depends(self, from_obj: str | Objective, to_obj: str | Objective):
-        """Add a dependency between two objectives. Both objectives must
+    def req_depends(self, from_req: str | Requirement, to_req: str | Requirement):
+        """Add a dependency between two requirements. Both requirements must
         already be in the catalog."""
-        from_obj = Catalog._get_objective(from_obj)
-        to_obj = Catalog._get_objective(to_obj)
-        assert from_obj in self.objectives and to_obj in self.objectives
-        self.objective_deps.setdefault(from_obj, set()).add(to_obj)
+        from_req = Catalog._get_requirement(from_req)
+        to_req = Catalog._get_requirement(to_req)
+        assert from_req in self.requirements and to_req in self.requirements
+        self.requirement_deps.setdefault(from_req, set()).add(to_req)
 
     def add_program(
         self,
         name: str | ProgramId,
-        courses: Optional[Iterable[str | Tuple[str, str] | CourseId]] = None,
+        requirements: Optional[Iterable[str | Requirement]] = None,
     ):
-        """Add a program to the catalog. Courses may optionally be specified
-        that pertain to the program."""
-        c_ids: Set[CourseId] = set()
-        if courses is not None:
-            c_ids = set(map(Catalog._get_course, courses))
+        """Add a program to the catalog. Requirements may optionally be
+        specified that pertain to the program."""
+        reqs: Set[Requirement] = set()
+        if requirements is not None:
+            reqs = set(map(Catalog._get_requirement, requirements))
         p_id = Catalog._get_program(name)
-        self.programs[p_id] = Program(p_id, c_ids)
+        self.programs[p_id] = Program(p_id, reqs)
 
     def add_course_to_program(
-        self, name: str | ProgramId, course: str | Tuple[str, str] | CourseId
+        self, name: str | ProgramId, requirement: str | Requirement
     ):
-        """Add a course to the specified program. If no such program exists in
-        the catalog, create it."""
+        """Add a requirement to the specified program. If no such requirement
+        exists in the catalog, create it."""
         p_id = Catalog._get_program(name)
-        c_id = Catalog._get_course(course)
-        self.programs.setdefault(p_id, Program(p_id, set())).courses.add(c_id)
+        req = Catalog._get_requirement(requirement)
+        self.programs.setdefault(p_id, Program(p_id, set())).requirements.add(req)

@@ -2,7 +2,7 @@
 import json
 import networkx
 
-from model import Catalog, Course, CourseId, Limits, Objective, Program, ProgramId
+from model import Catalog, Course, CourseId, Limits, Requirement, Program, ProgramId
 from serialize import CatalogEncoder, catalog_hook
 
 
@@ -10,17 +10,17 @@ def main():
     """Stubs for testing"""
     cs1400 = Course(CourseId("CS", "1400"), "Fundamentals of Programming", 3)
     cs1400_id = cs1400.c_id
-    basics = Objective("basic programming")
+    basics = Requirement("basic programming")
     cs1410 = Course(CourseId("CS", "1410"), "Object-Oriented Programming", 3)
     cs1410_id = cs1410.c_id
-    oop = Objective("OOP")
-    cs_cs = Program(ProgramId("CS"), {cs1400_id, cs1410_id})
+    oop = Requirement("OOP")
+    cs_cs = Program(ProgramId("CS"), {basics, oop})
     cs_id = cs_cs.p_id
     catalog = Catalog(
         {basics, oop},
         {oop: {basics}},
         {cs1400_id: cs1400, cs1410_id: cs1410},
-        {basics: cs1400_id, oop: cs1410_id},
+        {basics: {cs1400_id}, oop: {cs1410_id}},
         {cs_id: cs_cs},
         Limits(120, 18, 8),
     )
