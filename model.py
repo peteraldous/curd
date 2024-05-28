@@ -1,4 +1,5 @@
 """Data structures for curriculum design"""
+
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 from networkx import chordless_cycles, transitive_reduction, DiGraph
@@ -74,7 +75,7 @@ class Catalog:
     programs: Dict[ProgramId, Program]
     limits: Limits
 
-    def courses_graph(self) -> List[List[CourseId]] | DiGraph:
+    def courses_graph(self) -> List[List[CourseId]] | DiGraph[CourseId]:
         """Induce a `networkx.DiGraph` object over classes from the dependencies.
         If the resulting graph is cyclic, return the cycles as a list of lists
         of course IDs."""
@@ -87,7 +88,8 @@ class Catalog:
         cycles = sorted(list(chordless_cycles(result)))
         if cycles:
             return cycles
-        return transitive_reduction(result)
+        # type stub is incorrect
+        return transitive_reduction(result)  # type: ignore
 
     def add_course(self, dept: str, course_number: str, title: str, creds: int):
         """Add a course to the catalog. If another course by the same
@@ -164,7 +166,7 @@ class Catalog:
         p_id = Catalog._get_program(name)
         self.programs[p_id] = Program(p_id, reqs)
 
-    def add_course_to_program(
+    def add_requirement_to_program(
         self, name: str | ProgramId, requirement: str | Requirement
     ):
         """Add a requirement to the specified program. If no such requirement
