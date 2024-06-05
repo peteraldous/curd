@@ -3,3 +3,5 @@ __pycache__
 *~
 *.dot
 *.json
+*.svg
+*.png

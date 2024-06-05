@@ -75,16 +75,30 @@ class Catalog:
     programs: Dict[ProgramId, Program]
     limits: Limits
 
-    def courses_graph(self) -> List[List[CourseId]] | DiGraph[CourseId]:
+    def reqs_graph(self) -> DiGraph:
+        """Create a `networkx.DiGraph` object to show the relationships between
+        requirements."""
+        result: DiGraph = DiGraph()
+        for post, pres in self.requirement_deps.items():
+            for pre in pres:
+                result.add_edge(pre.name, post.name)
+        return result
+
+    def courses_graph(self) -> List[List[CourseId]] | DiGraph:
         """Induce a `networkx.DiGraph` object over classes from the dependencies.
         If the resulting graph is cyclic, return the cycles as a list of lists
-        of course IDs."""
+        of course IDs.
+
+        If a requirement can be satisfied by multiple courses, pick one
+        arbitrarily. (Consider making a meta-node with the name of the
+                      requirement instead.)"""
         result: DiGraph = DiGraph()
         for requirement, deps in self.requirement_deps.items():
-            for from_course in self.course_requirements.get(requirement, set()):
-                for dep in deps:
-                    for to_course in self.course_requirements.get(dep, set()):
-                        result.add_edge(from_course, to_course)
+            post_course = next(iter(self.course_requirements.get(requirement, set())))
+            for dep in deps:
+                pre_course = next(iter(self.course_requirements.get(dep, set())))
+                if post_course != pre_course:
+                    result.add_edge(post_course, pre_course)
         cycles = sorted(list(chordless_cycles(result)))
         if cycles:
             return cycles
@@ -137,21 +151,25 @@ class Catalog:
         req: str | Requirement,
         courses: Iterable[str | Tuple[str, str] | CourseId],
     ):
-        """Add a requirement to the catalog and associate it with each course
-        in `courses`. If the requirement is already in the catalog, add
+        """Add a requirement to the catalog, which can be satisfied by any
+        course in `courses`. If the requirement is already in the catalog, add
         `courses` to it."""
         course_ids = set(map(Catalog._get_course, courses))
         req = Catalog._get_requirement(req)
         self.requirements.add(req)
         self.course_requirements.setdefault(req, set()).update(course_ids)
 
-    def req_depends(self, from_req: str | Requirement, to_req: str | Requirement):
+    def req_depends(self, pre_req: str | Requirement, post_req: str | Requirement):
         """Add a dependency between two requirements. Both requirements must
-        already be in the catalog."""
-        from_req = Catalog._get_requirement(from_req)
-        to_req = Catalog._get_requirement(to_req)
-        assert from_req in self.requirements and to_req in self.requirements
-        self.requirement_deps.setdefault(from_req, set()).add(to_req)
+        already be in the catalog.
+
+        All prerequisites must be satisfied before enrolling in a course. If
+        students can choose between courses, create a requirement that can be
+        satisfied by any of them."""
+        pre_req = Catalog._get_requirement(pre_req)
+        post_req = Catalog._get_requirement(post_req)
+        assert pre_req in self.requirements and post_req in self.requirements
+        self.requirement_deps.setdefault(post_req, set()).add(pre_req)
 
     def add_program(
         self,
