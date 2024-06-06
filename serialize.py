@@ -1,4 +1,5 @@
 """Serialization and deserialization for the classes in the data model"""
+
 import json
 import sys
 
@@ -53,11 +54,13 @@ def catalog_hook(dct):
         try:
             requirements = {Requirement(req) for req in dct["requirements"]}
             req_deps = {
-                Requirement(from_name): {Requirement(to_name) for to_name in to_names}
-                for (from_name, to_names) in dct["req_deps"].items()
+                Requirement(post_name): {
+                    Requirement(pre_name) for pre_name in pre_names
+                }
+                for (post_name, pre_names) in dct["req_deps"].items()
             }
             courses = {}
-            for (dept, number, title, creds) in dct["courses"]:
+            for dept, number, title, creds in dct["courses"]:
                 c_id = CourseId(dept, number)
                 courses[c_id] = Course(c_id, title, creds)
             course_reqs = {
@@ -67,7 +70,7 @@ def catalog_hook(dct):
                 for (req_name, courses) in dct["course_reqs"].items()
             }
             programs = {}
-            for (name, requirements) in dct["programs"]:
+            for name, requirements in dct["programs"]:
                 p_id = ProgramId(name)
                 programs[p_id] = Program(
                     p_id, {Requirement(name) for name in requirements}

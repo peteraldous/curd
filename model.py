@@ -75,14 +75,36 @@ class Catalog:
     programs: Dict[ProgramId, Program]
     limits: Limits
 
-    def reqs_graph(self) -> DiGraph:
+    @staticmethod
+    def _reduce(d: DiGraph) -> List[List[CourseId]] | DiGraph:
+        cycles = sorted(list(chordless_cycles(d)))
+        if cycles:
+            return cycles
+        # type stub is incorrect
+        return transitive_reduction(d)  # type: ignore
+
+    def reqs_graph(self) -> List[List[CourseId]] | DiGraph:
         """Create a `networkx.DiGraph` object to show the relationships between
         requirements."""
         result: DiGraph = DiGraph()
         for post, pres in self.requirement_deps.items():
             for pre in pres:
-                result.add_edge(pre.name, post.name)
-        return result
+                result.add_edge(pre, post)
+        return Catalog._reduce(result)
+
+    def exam_topics(self) -> List[List[CourseId]] | Dict[CourseId, Set[Requirement]]:
+        """Construct a dictionary mapping course IDs to sets of Requirements
+        upon which the course's requirements depend. If the requirements graph
+        is cyclic, return the cycles instead."""
+        result: Dict[CourseId, Set[Requirement]] = {}
+        reqs = self.reqs_graph()
+        if isinstance(reqs, DiGraph):
+            for pre, post in reqs.edges:
+                for post_course in self.course_requirements.get(post, {}):
+                    if post_course not in self.course_requirements.get(pre, {}):
+                        result.setdefault(post_course, set()).add(pre)
+            return result
+        return reqs
 
     def courses_graph(self) -> List[List[CourseId]] | DiGraph:
         """Induce a `networkx.DiGraph` object over classes from the dependencies.
@@ -99,11 +121,7 @@ class Catalog:
                 pre_course = next(iter(self.course_requirements.get(dep, set())))
                 if post_course != pre_course:
                     result.add_edge(post_course, pre_course)
-        cycles = sorted(list(chordless_cycles(result)))
-        if cycles:
-            return cycles
-        # type stub is incorrect
-        return transitive_reduction(result)  # type: ignore
+        return Catalog._reduce(result)
 
     def add_course(self, dept: str, course_number: str, title: str, creds: int):
         """Add a course to the catalog. If another course by the same

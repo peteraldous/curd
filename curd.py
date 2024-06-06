@@ -53,12 +53,17 @@ def make_reqs(filename: str):
     graph = catalog.reqs_graph()
     networkx.nx_pydot.write_dot(graph, "output.dot")
 
+    for course, topics in catalog.exam_topics().items():
+        print(f"{course.dept} {course.course_number}")
+        for topic in topics:
+            print(f"\t{topic.name}")
+
 
 def main():
     """Stubs for testing"""
 
     test_output()
-    test_input()
+    # test_input()
 
     if len(sys.argv) > 1:
         make_reqs(sys.argv[1])
