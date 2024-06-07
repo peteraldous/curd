@@ -37,13 +37,13 @@ def test_output():
 
 def test_input():
     """Read a file and generate a graph from it"""
-    with open("deps.json", "r", encoding="utf-8") as json_file:
+    with open("concepts.json", "r", encoding="utf-8") as json_file:
         catalog = json.load(json_file, object_hook=catalog_hook)
 
     print(f"Successfully read JSON back:\n\n{catalog}")
 
     graph = catalog.courses_graph()
-    networkx.nx_pydot.write_dot(graph, "deps.dot")
+    networkx.nx_pydot.write_dot(graph, "concepts.dot")
 
 
 def make_reqs(filename: str):
@@ -51,7 +51,10 @@ def make_reqs(filename: str):
         catalog = json.load(json_file, object_hook=catalog_hook)
 
     graph = catalog.reqs_graph()
-    networkx.nx_pydot.write_dot(graph, "output.dot")
+    name_graph: networkx.DiGraph = networkx.DiGraph()
+    for pre, post in graph.edges:
+        name_graph.add_edge(pre.name, post.name)
+    networkx.nx_pydot.write_dot(name_graph, "output.dot")
 
     for course, topics in catalog.exam_topics().items():
         print(f"{course.dept} {course.course_number}")
@@ -63,7 +66,7 @@ def main():
     """Stubs for testing"""
 
     test_output()
-    # test_input()
+    test_input()
 
     if len(sys.argv) > 1:
         make_reqs(sys.argv[1])
