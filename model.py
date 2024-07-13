@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Set, Tuple
-from networkx import chordless_cycles, transitive_reduction, DiGraph
+from networkx import chordless_cycles, transitive_closure, transitive_reduction, DiGraph
 
 
 @dataclass(order=True, frozen=True)
@@ -66,6 +66,11 @@ class Limits:
 
 
 @dataclass
+class CycleException(ValueError):
+    cycles: List[List[CourseId]]
+
+
+@dataclass
 class Catalog:
     "A course catalog"
     requirements: Set[Requirement]
@@ -76,21 +81,17 @@ class Catalog:
     limits: Limits
 
     @staticmethod
-    def _reduce(d: DiGraph) -> List[List[CourseId]] | DiGraph:
-        cycles = sorted(list(chordless_cycles(d)))
-        if cycles:
-            return cycles
-        # type stub is incorrect
-        return transitive_reduction(d)  # type: ignore
+    def _check(d: DiGraph) -> List[List[CourseId]]:
+        return sorted(list(chordless_cycles(d)))
 
-    def reqs_graph(self) -> List[List[CourseId]] | DiGraph:
+    def reqs_graph(self) -> DiGraph:
         """Create a `networkx.DiGraph` object to show the relationships between
         requirements."""
         result: DiGraph = DiGraph()
         for post, pres in self.requirement_deps.items():
             for pre in pres:
                 result.add_edge(pre, post)
-        return Catalog._reduce(result)
+        return Catalog.reduce_graph(result)
 
     def exam_topics(self) -> List[List[CourseId]] | Dict[CourseId, Set[Requirement]]:
         """Construct a dictionary mapping course IDs to sets of Requirements
@@ -106,7 +107,7 @@ class Catalog:
             return result
         return reqs
 
-    def courses_graph(self) -> List[List[CourseId]] | DiGraph:
+    def build_courses_graph(self) -> DiGraph:
         """Induce a `networkx.DiGraph` object over classes from the dependencies.
         If the resulting graph is cyclic, return the cycles as a list of lists
         of course IDs.
@@ -121,7 +122,25 @@ class Catalog:
                 pre_course = next(iter(self.course_requirements.get(dep, set())))
                 if post_course != pre_course:
                     result.add_edge(post_course, pre_course)
-        return Catalog._reduce(result)
+        return result
+
+    @staticmethod
+    def reduce_graph(graph: DiGraph) -> DiGraph:
+        """Check for cycles in `graph`. If it is cyclic, return the cycles.
+        Otherwise, return its transitive reduction."""
+        cycles = Catalog._check(graph)
+        if cycles:
+            raise CycleException(cycles)
+        return transitive_reduction(graph)  # type: ignore
+
+    @staticmethod
+    def close_graph(graph: DiGraph) -> DiGraph:
+        """Check for cycles in `graph`. If it is cyclic, return the cycles.
+        Otherwise, return its transitive closure."""
+        cycles = Catalog._check(graph)
+        if cycles:
+            raise CycleException(cycles)
+        return transitive_closure(graph)  # type: ignore
 
     def add_course(self, dept: str, course_number: str, title: str, creds: int):
         """Add a course to the catalog. If another course by the same

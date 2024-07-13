@@ -27,7 +27,7 @@ def test_output():
         Limits(120, 18, 8),
     )
 
-    graph = catalog.courses_graph()
+    graph = Catalog.reduce_graph(catalog.build_courses_graph())
     networkx.nx_pydot.write_dot(graph, "small.dot")
 
     with open("small.json", "w", encoding="utf-8") as json_file:
@@ -42,8 +42,12 @@ def test_input():
 
     print(f"Successfully read JSON back:\n\n{catalog}")
 
-    graph = catalog.courses_graph()
-    networkx.nx_pydot.write_dot(graph, "concepts.dot")
+    graph = catalog.build_courses_graph()
+    networkx.nx_pydot.write_dot(Catalog.reduce_graph(graph), "concepts.dot")
+
+    with open("order.txt", "w", encoding="utf-8") as order:
+        for post, pre in Catalog.close_graph(graph).edges:
+            print(f"{pre}\t{post}", file=order)
 
 
 def make_reqs(filename: str):

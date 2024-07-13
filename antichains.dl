@@ -1,0 +1,124 @@
+.type course <: symbol
+
+#define TERM_MIN_CREDITS 12
+#define TERM_MAX_CREDITS 18
+#define TERMS 8
+#define TOTAL_CREDITS 120
+
+.decl Courses(c: course, credits: number)
+.input Courses
+
+.decl Requirements(c: course)
+.input Requirements
+
+.decl Ordered(pre: course, post: course)
+.input Ordered
+
+Ordered(a,c) :- Ordered(a,b), Ordered(b, c).
+
+.decl Unordered(c1: course, c2: course)
+Unordered(c1, c2), Unordered(c2, c1) :-
+    Courses(c1, _),
+    Courses(c2, _),
+    c1 != c2,
+    !Ordered(c1, c2),
+    !Ordered(c2, c1).
+
+.type CourseList = Courses { c: course, rest: CourseList } | NoCourse {}
+
+.decl PartialTerm(courses: CourseList, credits: number)
+
+PartialTerm($Courses(c, $NoCourse()), credits) :- Courses(c, credits), credits <= TERM_MAX_CREDITS.
+PartialTerm($Courses(c, t), total) :-
+    Courses(c, c_credits),
+    c < first,
+    PartialTerm(t, t_credits),
+    NoConflicts(c, t),
+    t = $Courses(first, _),
+    total = t_credits + c_credits,
+    total <= TERM_MAX_CREDITS.
+
+.decl NoConflicts(c: course, cs: CourseList)
+NoConflicts(c, $NoCourse()) :- Courses(c, _).
+NoConflicts(c, t) :-
+    Courses(c, _),
+    Courses(first, _),
+    Unordered(c, first),
+    t = $Courses(first, rest),
+    PartialTerm(t, _),
+    NoConflicts(c, rest).
+
+.decl Term(courses: CourseList, credits: number)
+
+Term(c, cs) :- cs >= TERM_MIN_CREDITS, PartialTerm(c, cs).
+
+.type TermList = Terms { t: CourseList, rest: TermList } | NoTerm {}
+
+.decl MayPrecede(before: CourseList, after: CourseList)
+MayPrecede($NoCourse(), after) :- Term(after, _).
+MayPrecede(before, after) :-
+    Term(before, _),
+    Term(after, _),
+    before = $Courses(c, _),
+    AllNotLater(c, after).
+
+.decl AllNotLater(c: course, after: CourseList)
+AllNotLater(c, $NoCourse()) :- Courses(c, _).
+AllNotLater(c, courses) :-
+    Courses(c, _),
+    Courses(first, _),
+    courses = $Courses(first, rest),
+    Term(courses, _),
+    !Ordered(first, c),
+    AllNotLater(c, rest).
+
+.decl MayPrecedeAll(before: CourseList, afters: TermList)
+MayPrecedeAll(before, $NoTerm()) :- Term(before, _).
+MayPrecedeAll(before, $Terms(first, rest)) :-
+    Term(before, _),
+    Term(first, _),
+    MayPrecede(before, first),
+    MayPrecedeAll(before, rest).
+
+.decl PartialSchedule(terms: TermList, credits: number)
+PartialSchedule($Terms(term, $NoTerm()), credits) :- Term(term, credits), credits <= TOTAL_CREDITS.
+PartialSchedule($Terms(term, terms), total) :-
+    Term(term, term_credits),
+    PartialSchedule(terms, terms_credits),
+    total = term_credits + terms_credits,
+    total <= TOTAL_CREDITS,
+    MayPrecedeAll(term, terms).
+
+.decl CourseListContains(courses: CourseList, c: course)
+CourseListContains(courses, c) :- Courses(c, _), courses = $Courses(c, _), PartialTerm(courses, _).
+CourseListContains(courses, c) :- Courses(c, _), courses = $Courses(_, rest), PartialTerm(courses, _), CourseListContains(rest, c).
+
+.decl Contains(terms: TermList, c: course)
+Contains(schedule, c) :- Courses(c, _), Term(first, _), schedule = $Terms(first, _), PartialSchedule(schedule, _), CourseListContains(first, c).
+Contains(schedule, c) :- Courses(c, _), PartialSchedule(schedule, _), schedule = $Terms(_, rest), Contains(rest, c).
+
+.decl Missing(terms: TermList, c: course)
+Missing(terms, c) :- PartialSchedule(terms, _), Requirements(c), !Contains(terms, c).
+
+/*
+.decl ReqsList(courses: CourseList, length: number)
+ReqsList($Courses(c, $NoCourse()), 1) :- Requirements(c).
+ReqsList($Courses(c, others), length+1) :-
+    Requirements(c),
+    Requirements(first),
+    c < first,
+    others = $Courses(first, _),
+    ReqsList(others, length).
+
+.decl AllRequirements(courses: CourseList)
+AllRequirements(courses) :- ReqsList(courses, count : { Requirements(_) }).
+
+.decl Covers(terms: TermList, reqs: CourseList)
+Covers(terms, $NoCourse()) :- PartialSchedule(terms, _).
+Covers(terms, $Courses(first, rest)) :- PartialSchedule(terms, _), Contains(terms, first), Covers(terms, rest).
+*/
+
+.decl Schedule(terms: TermList)
+Schedule(terms) :- PartialSchedule(terms, _), count : { Missing(terms, _) } = 0.
+
+.output Schedule
