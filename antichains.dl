@@ -1,15 +1,20 @@
 .type course <: symbol
+.type req <: symbol
 
 #define TERM_MIN_CREDITS 12
 #define TERM_MAX_CREDITS 18
 #define TERMS 8
 #define TOTAL_CREDITS 120
+#define IDEAL TOTAL_CREDITS / TERMS
 
 .decl Courses(c: course, credits: number)
 .input Courses
 
-.decl Requirements(c: course)
+.decl Requirements(r: req)
 .input Requirements
+
+.decl Satisfies(c: course, r: req)
+.input Satisfies
 
 .decl Ordered(pre: course, post: course)
 .input Ordered
@@ -26,13 +31,13 @@ Unordered(c1, c2), Unordered(c2, c1) :-
 
 .type CourseList = Courses { c: course, rest: CourseList } | NoCourse {}
 
-.decl PartialTerm(courses: CourseList, credits: number)
+.decl PotentialTerm(courses: CourseList, credits: number)
 
-PartialTerm($Courses(c, $NoCourse()), credits) :- Courses(c, credits), credits <= TERM_MAX_CREDITS.
-PartialTerm($Courses(c, t), total) :-
+PotentialTerm($Courses(c, $NoCourse()), credits) :- Courses(c, credits), credits <= TERM_MAX_CREDITS.
+PotentialTerm($Courses(c, t), total) :-
     Courses(c, c_credits),
     c < first,
-    PartialTerm(t, t_credits),
+    PotentialTerm(t, t_credits),
     NoConflicts(c, t),
     t = $Courses(first, _),
     total = t_credits + c_credits,
@@ -45,12 +50,12 @@ NoConflicts(c, t) :-
     Courses(first, _),
     Unordered(c, first),
     t = $Courses(first, rest),
-    PartialTerm(t, _),
+    PotentialTerm(t, _),
     NoConflicts(c, rest).
 
 .decl Term(courses: CourseList, credits: number)
 
-Term(c, cs) :- cs >= TERM_MIN_CREDITS, PartialTerm(c, cs).
+Term(c, cs) :- cs >= TERM_MIN_CREDITS, PotentialTerm(c, cs).
 
 .type TermList = Terms { t: CourseList, rest: TermList } | NoTerm {}
 
@@ -80,45 +85,65 @@ MayPrecedeAll(before, $Terms(first, rest)) :-
     MayPrecede(before, first),
     MayPrecedeAll(before, rest).
 
-.decl PartialSchedule(terms: TermList, credits: number)
-PartialSchedule($Terms(term, $NoTerm()), credits) :- Term(term, credits), credits <= TOTAL_CREDITS.
-PartialSchedule($Terms(term, terms), total) :-
+// The score is the summed difference between each semester's credit load and
+// the average number of credits in a term. The lower, the better.
+.decl PotentialSchedule(terms: TermList, credits: number, score: number)
+PotentialSchedule($Terms(term, $NoTerm()), credits, score) :-
+    Term(term, credits),
+    credits <= TOTAL_CREDITS,
+    (score = IDEAL - credits, score >= 0;
+     score = credits - IDEAL, score >= 0).
+PotentialSchedule($Terms(term, terms), total, score + terms_score) :-
     Term(term, term_credits),
-    PartialSchedule(terms, terms_credits),
+    PotentialSchedule(terms, terms_credits, terms_score),
     total = term_credits + terms_credits,
     total <= TOTAL_CREDITS,
-    MayPrecedeAll(term, terms).
+    MayPrecedeAll(term, terms),
+    (score = IDEAL - term_credits, score >= 0;
+     score = term_credits - IDEAL, score >= 0).
 
-.decl CourseListContains(courses: CourseList, c: course)
-CourseListContains(courses, c) :- Courses(c, _), courses = $Courses(c, _), PartialTerm(courses, _).
-CourseListContains(courses, c) :- Courses(c, _), courses = $Courses(_, rest), PartialTerm(courses, _), CourseListContains(rest, c).
+.decl FullSchedule(terms: TermList, credits: number, score: number)
+FullSchedule(terms, credits, score) :- PotentialSchedule(terms, credits, score), credits >= TOTAL_CREDITS.
 
-.decl Contains(terms: TermList, c: course)
-Contains(schedule, c) :- Courses(c, _), Term(first, _), schedule = $Terms(first, _), PartialSchedule(schedule, _), CourseListContains(first, c).
-Contains(schedule, c) :- Courses(c, _), PartialSchedule(schedule, _), schedule = $Terms(_, rest), Contains(rest, c).
+.decl PartialSchedule(terms: TermList)
+PartialSchedule(terms) :- FullSchedule(terms, _, _).
+PartialSchedule(rest) :- PartialSchedule($Terms(_, rest)).
 
-.decl Missing(terms: TermList, c: course)
-Missing(terms, c) :- PartialSchedule(terms, _), Requirements(c), !Contains(terms, c).
+.decl PartialScheduleTerms(term: CourseList)
+PartialScheduleTerms(term) :- PartialSchedule($Terms(term, _)).
 
-/*
-.decl ReqsList(courses: CourseList, length: number)
-ReqsList($Courses(c, $NoCourse()), 1) :- Requirements(c).
-ReqsList($Courses(c, others), length+1) :-
-    Requirements(c),
-    Requirements(first),
-    c < first,
-    others = $Courses(first, _),
-    ReqsList(others, length).
+.decl PartialTerm(courses: CourseList)
+PartialTerm(courses) :- PartialScheduleTerms(courses).
+PartialTerm(rest) :- PartialTerm($Courses(_, rest)).
 
-.decl AllRequirements(courses: CourseList)
-AllRequirements(courses) :- ReqsList(courses, count : { Requirements(_) }).
+.decl PartialTermSatisfies(courses: CourseList, r: req)
+PartialTermSatisfies(courses, r) :-
+    Requirements(r),
+    Courses(c, _),
+    (Satisfies(c, r);
+     PartialTermSatisfies(rest, r)),
+    courses = $Courses(c, rest),
+    PartialTerm(courses).
 
-.decl Covers(terms: TermList, reqs: CourseList)
-Covers(terms, $NoCourse()) :- PartialSchedule(terms, _).
-Covers(terms, $Courses(first, rest)) :- PartialSchedule(terms, _), Contains(terms, first), Covers(terms, rest).
-*/
+.decl TermSatisfies(courses: CourseList, r: req)
+TermSatisfies(courses, r) :-
+    PartialTermSatisfies(courses, r),
+    Term(courses, _).
 
-.decl Schedule(terms: TermList)
-Schedule(terms) :- PartialSchedule(terms, _), count : { Missing(terms, _) } = 0.
+.decl ScheduleSatisfies(terms: TermList, r: req)
+ScheduleSatisfies(schedule, r) :-
+    Requirements(r),
+    Courses(c, _),
+    Satisfies(c, r),
+    schedule = $Terms(first, rest),
+    PartialSchedule(schedule),
+    (TermSatisfies(first, r);
+     ScheduleSatisfies(rest, r)).
+
+.decl Schedule(terms: TermList, score: number)
+Schedule(terms, score) :-
+    FullSchedule(terms, _, score),
+    count : { Requirements(_) } = count : { Requirements(r), ScheduleSatisfies(terms, r) }.
 
 .output Schedule
+.output PotentialSchedule
