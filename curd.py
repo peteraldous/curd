@@ -22,7 +22,7 @@ def test_output():
         {basics, oop},
         {oop: {basics}},
         {cs1400_id: cs1400, cs1410_id: cs1410},
-        {basics: {cs1400_id}, oop: {cs1410_id}},
+        {basics: (1, {cs1400_id}), oop: (1, {cs1410_id})},
         {cs_id: cs_cs},
         Limits(120, 18, 8),
     )

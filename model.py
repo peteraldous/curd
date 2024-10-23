@@ -54,6 +54,7 @@ class Program:
     def fits(self, limits: "Limits"):
         """Determine if the program fits within the specified credit and term
         limits."""
+        # TODO
         return self is not None and limits is not None
 
 
@@ -76,7 +77,7 @@ class Catalog:
     requirements: Set[Requirement]
     requirement_deps: Dict[Requirement, Set[Requirement]]
     courses: Dict[CourseId, Course]
-    course_requirements: Dict[Requirement, Set[CourseId]]
+    course_requirements: Dict[Requirement, Tuple[int, Set[CourseId]]]
     programs: Dict[ProgramId, Program]
     limits: Limits
 
@@ -93,20 +94,6 @@ class Catalog:
                 result.add_edge(pre, post)
         return Catalog.reduce_graph(result)
 
-    def exam_topics(self) -> List[List[CourseId]] | Dict[CourseId, Set[Requirement]]:
-        """Construct a dictionary mapping course IDs to sets of Requirements
-        upon which the course's requirements depend. If the requirements graph
-        is cyclic, return the cycles instead."""
-        result: Dict[CourseId, Set[Requirement]] = {}
-        reqs = self.reqs_graph()
-        if isinstance(reqs, DiGraph):
-            for pre, post in reqs.edges:
-                for post_course in self.course_requirements.get(post, {}):
-                    if post_course not in self.course_requirements.get(pre, {}):
-                        result.setdefault(post_course, set()).add(pre)
-            return result
-        return reqs
-
     def build_courses_graph(self) -> DiGraph:
         """Induce a `networkx.DiGraph` object over classes from the dependencies.
         If the resulting graph is cyclic, return the cycles as a list of lists
@@ -117,9 +104,9 @@ class Catalog:
                       requirement instead.)"""
         result: DiGraph = DiGraph()
         for requirement, deps in self.requirement_deps.items():
-            post_course = next(iter(self.course_requirements.get(requirement, set())))
+            post_course = next(iter(self.course_requirements[requirement][1]))
             for dep in deps:
-                pre_course = next(iter(self.course_requirements.get(dep, set())))
+                pre_course = next(iter(self.course_requirements[dep][1]))
                 if post_course != pre_course:
                     result.add_edge(post_course, pre_course)
         return result
@@ -187,14 +174,15 @@ class Catalog:
         self,
         req: str | Requirement,
         courses: Iterable[str | Tuple[str, str] | CourseId],
+        count: int = 1,
     ):
         """Add a requirement to the catalog, which can be satisfied by any
-        course in `courses`. If the requirement is already in the catalog, add
-        `courses` to it."""
+        `count` courses in `courses`."""
         course_ids = set(map(Catalog._get_course, courses))
         req = Catalog._get_requirement(req)
         self.requirements.add(req)
-        self.course_requirements.setdefault(req, set()).update(course_ids)
+        assert req not in self.course_requirements
+        self.course_requirements[req] = (count, set(course_ids))
 
     def req_depends(self, pre_req: str | Requirement, post_req: str | Requirement):
         """Add a dependency between two requirements. Both requirements must

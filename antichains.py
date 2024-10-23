@@ -157,7 +157,7 @@ class Scheduler:
             case _:
                 raise ValueError("%s is not an Op!" % (op,))
 
-    def update(self):
+    def update(self) -> None:
         self.schedule: List[Tuple[int, Set[str]]] = []
         self.solver.check()
         model = self.solver.model()
@@ -183,7 +183,7 @@ class Scheduler:
             total = model[self.totals[index]]
             self.schedule.append((total, classes))
 
-    def print_schedule(self):
+    def print_schedule(self) -> None:
         for index, (total, classes) in enumerate(self.schedule):
             term = index + 1
             print(f"Term {term} ({total} credits):")
