@@ -77,7 +77,7 @@ class Catalog:
     requirements: Set[Requirement]
     requirement_deps: Dict[Requirement, Set[Requirement]]
     courses: Dict[CourseId, Course]
-    course_requirements: Dict[Requirement, Tuple[int, Set[CourseId]]]
+    course_requirements: Dict[Requirement, Set[CourseId]]
     programs: Dict[ProgramId, Program]
     limits: Limits
 
@@ -104,9 +104,9 @@ class Catalog:
                       requirement instead.)"""
         result: DiGraph = DiGraph()
         for requirement, deps in self.requirement_deps.items():
-            post_course = next(iter(self.course_requirements[requirement][1]))
+            post_course = next(iter(self.course_requirements[requirement]))
             for dep in deps:
-                pre_course = next(iter(self.course_requirements[dep][1]))
+                pre_course = next(iter(self.course_requirements[dep]))
                 if post_course != pre_course:
                     result.add_edge(post_course, pre_course)
         return result
@@ -174,15 +174,14 @@ class Catalog:
         self,
         req: str | Requirement,
         courses: Iterable[str | Tuple[str, str] | CourseId],
-        count: int = 1,
     ):
         """Add a requirement to the catalog, which can be satisfied by any
-        `count` courses in `courses`."""
+        course in `courses`."""
         course_ids = set(map(Catalog._get_course, courses))
         req = Catalog._get_requirement(req)
         self.requirements.add(req)
         assert req not in self.course_requirements
-        self.course_requirements[req] = (count, set(course_ids))
+        self.course_requirements[req] = set(course_ids)
 
     def req_depends(self, pre_req: str | Requirement, post_req: str | Requirement):
         """Add a dependency between two requirements. Both requirements must
