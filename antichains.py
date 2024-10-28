@@ -49,7 +49,7 @@ class Constraint:
 class Scheduler:
     def __init__(self, courses, prereqs, term_count, term_credit_max):
         self.solver = Solver()
-        self.courses = courses
+        self.courses = sorted(courses)
         self.prereqs = prereqs
         self.term_count = term_count
         self.term_credit_max = term_credit_max
@@ -65,7 +65,7 @@ class Scheduler:
     def generate_schedule(
         self,
         additional_constraints: Optional[List[Constraint]] = None,
-    ):
+    ) -> list[Tuple[int, set[str]]]:
         counter = 0
 
         self.course_lookup: Dict[str, CourseData] = {}
@@ -108,7 +108,7 @@ class Scheduler:
                     constraint.r_course,
                 )
 
-        for before, after in prereqs:
+        for before, after in self.prereqs:
             prerequisite(before, after)
 
         self.totals: List[ExprRef] = [
@@ -134,7 +134,7 @@ class Scheduler:
         for total in self.totals:
             self.solver.add(total <= self.max_credits)
 
-        self.update()
+        return self.update()
 
     def add_constraint(
         self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int
@@ -157,7 +157,7 @@ class Scheduler:
             case _:
                 raise ValueError("%s is not an Op!" % (op,))
 
-    def update(self) -> None:
+    def update(self) -> List[Tuple[int, Set[str]]]:
         self.schedule: List[Tuple[int, Set[str]]] = []
         self.solver.check()
         model = self.solver.model()
@@ -183,12 +183,7 @@ class Scheduler:
             total = model[self.totals[index]]
             self.schedule.append((total, classes))
 
-    def print_schedule(self) -> None:
-        for index, (total, classes) in enumerate(self.schedule):
-            term = index + 1
-            print(f"Term {term} ({total} credits):")
-            for c in sorted(classes):
-                print(f"\t{c}")
+        return self.schedule
 
 
 if __name__ == "__main__":

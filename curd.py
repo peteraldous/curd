@@ -2,7 +2,6 @@
 
 import json
 import networkx
-import sys
 
 from model import Catalog, Course, CourseId, Limits, Requirement, Program, ProgramId
 from serialize import CatalogEncoder, catalog_hook
@@ -37,7 +36,7 @@ def test_output():
 
 def test_input():
     """Read a file and generate a graph from it"""
-    with open("concepts.json", "r", encoding="utf-8") as json_file:
+    with open("cs.json", "r", encoding="utf-8") as json_file:
         catalog = json.load(json_file, object_hook=catalog_hook)
 
     print(f"Successfully read JSON back:\n\n{catalog}")
@@ -48,6 +47,14 @@ def test_input():
     with open("order.txt", "w", encoding="utf-8") as order:
         for post, pre in Catalog.close_graph(graph).edges:
             print(f"{pre}\t{post}", file=order)
+
+    schedule = catalog.generate_schedule("CS")
+
+    for index, (total, classes) in enumerate(schedule):
+        term = index + 1
+        print(f"Term {term} ({total} credits):")
+        for c in sorted(classes):
+            print(f"\t{c}")
 
 
 def make_reqs(filename: str):
@@ -60,20 +67,12 @@ def make_reqs(filename: str):
         name_graph.add_edge(pre.name, post.name)
     networkx.nx_pydot.write_dot(name_graph, "output.dot")
 
-    for course, topics in catalog.exam_topics().items():
-        print(f"{course.dept} {course.course_number}")
-        for topic in topics:
-            print(f"\t{topic.name}")
-
 
 def main():
     """Stubs for testing"""
 
     test_output()
     test_input()
-
-    if len(sys.argv) > 1:
-        make_reqs(sys.argv[1])
 
 
 if __name__ == "__main__":
