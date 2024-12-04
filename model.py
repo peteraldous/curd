@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 from networkx import chordless_cycles, transitive_closure, transitive_reduction, DiGraph
 
+import random
+
 import antichains
 
 
@@ -111,7 +113,7 @@ class Catalog:
                 pre_course = next(iter(self.course_requirements[dep]))
                 if post_course != pre_course:
                     result.add_edge(pre_course, post_course)
-        return Catalog.reduce_graph(result)  # type: ignore
+        return Catalog.close_graph(result)  # type: ignore
 
     @staticmethod
     def reduce_graph(graph: DiGraph) -> DiGraph:
@@ -219,21 +221,23 @@ class Catalog:
         req = Catalog._get_requirement(requirement)
         self.programs.setdefault(p_id, Program(p_id, set())).requirements.add(req)
 
-    def generate_schedule(self, p_id: str | ProgramId) -> list[Tuple[int, set[str]]]:
+    def generate_schedule(self, p_id: str | ProgramId) -> antichains.Schedule:
         """Choose classes that satisfy the program's requirements and put them
         in a schedule with the appropriate number of terms."""
         if isinstance(p_id, str):
             p_id = ProgramId(p_id)
         program = self.programs[p_id]
-        courses: set[CourseId] = set()
-        print(program)
-        for req, options in self.course_requirements.items():
-            if req in program.requirements:
-                courses.add(next(iter(options)))
-        course_graph = self.build_courses_graph()
-        prereqs: list[Tuple[str, str]] = []
-        for before_id, after_id in course_graph.edges(courses):
-            prereqs.append((str(before_id), str(after_id)))
+        courses = {
+            random.choice(list(options))
+            for req, options in self.course_requirements.items()
+            if req in program.requirements
+        }
+        prereqs = [
+            (str(before_id), str(after_id))
+            for (before_id, after_id) in transitive_reduction(
+                self.build_courses_graph().subgraph(courses)
+            ).edges(courses)
+        ]
 
         def course_value(c_id: CourseId) -> Tuple[str, int]:
             c = self.courses[c_id]

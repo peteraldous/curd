@@ -50,11 +50,7 @@ def test_input():
 
     schedule = catalog.generate_schedule("CS")
 
-    for index, (total, classes) in enumerate(schedule):
-        term = index + 1
-        print(f"Term {term} ({total} credits):")
-        for c in sorted(classes):
-            print(f"\t{c}")
+    print(schedule)
 
 
 def make_reqs(filename: str):

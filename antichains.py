@@ -1,4 +1,4 @@
-from collections import namedtuple
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Set, Tuple
@@ -14,6 +14,7 @@ from z3 import (
     z3types,
 )
 import math
+import os
 
 Z = IntSort()
 S = StringSort()
@@ -46,59 +47,86 @@ class Constraint:
     r_course: str | int
 
 
+@dataclass
+class Schedule:
+    schedule: list[Tuple[int, set[str]]]
+
+    def __str__(self):
+        result = ""
+        for index, (total, classes) in enumerate(self.schedule):
+            term = index + 1
+            result += f"Term {term} ({total} credits):" + os.linesep
+            for c in sorted(classes):
+                result += f"\t{c}" + os.linesep
+        return result
+
+
 class Scheduler:
-    def __init__(self, courses, prereqs, term_count, term_credit_max):
+    def __init__(
+        self,
+        courses: Iterable[Tuple[str, int]],
+        prereqs: Iterable[Tuple[str, str]],
+        term_count: int,
+        term_credit_max: int,
+    ):
         self.solver = Solver()
-        self.courses = sorted(courses)
         self.prereqs = prereqs
         self.term_count = term_count
         self.term_credit_max = term_credit_max
+        self.max_credits = Const("max_credits", Z)
+        courses = sorted(courses)
+        self.total_required = sum(map(lambda p: p[1], courses))
+        self.course_lookup = {
+            name: self.make_course_data(name, credits)
+            for (name, credits) in sorted(courses)
+        }
+        self.counter = 0
+
+    def make_course_data(self, name: str, credits: int) -> CourseData:
+        term = Const(name + "_term", Z)
+        credit_var = Const(name + "_credits", Z)
+        self.solver.add(term > 0, term <= self.term_count)
+        self.solver.add(
+            credit_var == IntVal(credits),
+            credit_var > 0,
+            credit_var <= self.max_credits,
+        )
+        return CourseData(term, credit_var)
 
     def to_const(self, datum: str | ExprRef | int) -> ExprRef:
         if isinstance(datum, ExprRef):
             return datum
         elif isinstance(datum, str):
-            return self.course_lookup[datum].term
+            course = self.course_lookup.get(datum)
+            if course:
+                return course.term
+            print()
+            print("Courses:")
+            for name, data in self.course_lookup.items():
+                print(f"\t{name}: {data}")
+            print("No more courses")
+            raise ValueError("No such course: %s" % datum)
+            return None
         else:
             return IntVal(datum)
+
+    def make_term_total_variable(self, term: int):
+        old_counter = self.counter
+        self.counter += 1
+        return Const(f"total_{term}_{old_counter}", Z)
 
     def generate_schedule(
         self,
         additional_constraints: Optional[List[Constraint]] = None,
-    ) -> list[Tuple[int, set[str]]]:
-        counter = 0
+    ) -> Schedule:
 
-        self.course_lookup: Dict[str, CourseData] = {}
-        total_required = sum(map(lambda p: p[1], self.courses))
-
-        self.max_credits = Const("max_credits", Z)
         self.solver.add(self.max_credits <= IntVal(self.term_credit_max))
         self.solver.add(
-            self.max_credits >= IntVal(math.ceil(total_required / self.term_count))
+            self.max_credits >= IntVal(math.ceil(self.total_required / self.term_count))
         )
-
-        def add_course(name: str, credits: int) -> CourseData:
-            term = Const(name + "_term", Z)
-            credit_var = Const(name + "_credits", Z)
-            self.solver.add(term > 0, term <= self.term_count)
-            self.solver.add(
-                credit_var == IntVal(credits),
-                credit_var > 0,
-                credit_var <= self.max_credits,
-            )
-            return CourseData(term, credit_var)
 
         def prerequisite(before: ExprRef | str | int, after: ExprRef | str | int):
             self.add_constraint(before, Op.LT, after)
-
-        def make_term_total_variable(term: int):
-            nonlocal counter
-            old_counter = counter
-            counter += 1
-            return Const(f"total_{term}_{old_counter}", Z)
-
-        for name, credits in self.courses:
-            self.course_lookup[name] = add_course(name, credits)
 
         if additional_constraints:
             for constraint in additional_constraints:
@@ -112,14 +140,14 @@ class Scheduler:
             prerequisite(before, after)
 
         self.totals: List[ExprRef] = [
-            make_term_total_variable(index + 1) for index in range(self.term_count)
+            self.make_term_total_variable(index + 1) for index in range(self.term_count)
         ]
         for total in self.totals:
             self.solver.add(total == IntVal(0))
         for course, data in self.course_lookup.items():
             for index, prev_total in enumerate(self.totals):
                 term = index + 1
-                next_total = make_term_total_variable(term)
+                next_total = self.make_term_total_variable(term)
                 term_val = IntVal(term)
                 self.solver.add(
                     Implies(
@@ -141,6 +169,8 @@ class Scheduler:
     ):
         l_const = self.to_const(l_course)
         r_const = self.to_const(r_course)
+        # if l_const is None or r_const is None:
+        # return
         match op:
             case Op.LT:
                 self.solver.add(l_const < r_const)
@@ -157,8 +187,7 @@ class Scheduler:
             case _:
                 raise ValueError("%s is not an Op!" % (op,))
 
-    def update(self) -> List[Tuple[int, Set[str]]]:
-        self.schedule: List[Tuple[int, Set[str]]] = []
+    def update(self) -> Schedule:
         self.solver.check()
         model = self.solver.model()
         term_credit_max = self.term_credit_max
@@ -175,13 +204,16 @@ class Scheduler:
                 # when the solver fails, continue with the last functional model
                 break
 
+        schedule: List[Tuple[int, Set[str]]] = []
         terms: List[Set[str]] = [set() for _ in range(self.term_count)]
         for name, c in self.course_lookup.items():
             terms[model[c.term].as_long() - 1].add(name)
 
         for index, classes in enumerate(terms):
             total = model[self.totals[index]]
-            self.schedule.append((total, classes))
+            schedule.append((total, classes))
+
+        self.schedule = Schedule(schedule)
 
         return self.schedule
 
@@ -283,19 +315,19 @@ if __name__ == "__main__":
     ]
 
     scheduler = Scheduler(courses, prereqs, 8, 18)
-    scheduler.generate_schedule(
+    schedule = scheduler.generate_schedule(
         [
             Constraint("cs_4470", Op.NE, "cs_4490"),
             Constraint("biol_1610", Op.EQ, "biol_1615"),
         ],
     )
 
-    scheduler.print_schedule()
+    print(schedule)
 
     scheduler.add_constraint("cs_4490", Op.EQ, 8)
     scheduler.add_constraint("fa_dist", Op.EQ, 7)
 
-    scheduler.update()
+    schedule = scheduler.update()
 
     print()
-    scheduler.print_schedule()
+    print(schedule)
