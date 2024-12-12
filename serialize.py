@@ -1,9 +1,24 @@
 """Serialization and deserialization for the classes in the data model"""
 
+from typing import Tuple
+
 import json
 import sys
 
+from antichains import Op
 from model import Catalog, Course, CourseId, Limits, Requirement, Program, ProgramId
+
+
+def tuple_or_int(value: CourseId | int) -> Tuple[str, str] | int:
+    if isinstance(value, int):
+        return value
+    return value.to_tuple()
+
+
+def course_str_or_int(value: Tuple[str, str] | int) -> str | int:
+    if isinstance(value, int):
+        return value
+    return str(CourseId.from_tuple(value))
 
 
 class CatalogEncoder(json.JSONEncoder):
@@ -28,9 +43,7 @@ class CatalogEncoder(json.JSONEncoder):
                     for course in o.courses.values()
                 ],
                 "course_reqs": {
-                    req.name: [
-                        (course.dept, course.course_number) for course in courses
-                    ]
+                    req.name: [course.to_tuple() for course in courses]
                     for (req, courses) in o.course_requirements.items()
                 },
                 "programs": [
@@ -43,6 +56,11 @@ class CatalogEncoder(json.JSONEncoder):
                 "program_credit_limit": o.limits.program_credit_limit,
                 "term_credit_limit": o.limits.term_credit_limit,
                 "term_limit": o.limits.terms,
+                "selections": [course.to_tuple() for course in o.selections],
+                "constraints": [
+                    (left_course, op.value, right_course)
+                    for left_course, op, right_course in o.constraints
+                ],
             }
         return json.JSONEncoder.default(self, o)
 
@@ -78,8 +96,20 @@ def catalog_hook(dct):
             limits = Limits(
                 dct["program_credit_limit"], dct["term_credit_limit"], dct["term_limit"]
             )
+            selections = {CourseId.from_tuple(t) for t in dct.get("selections", set())}
+            constraints = {
+                (str(CourseId.from_tuple(lhs)), Op(op), course_str_or_int(rhs))
+                for lhs, op, rhs in dct.get("constraints", set())
+            }
             return Catalog(
-                requirements, req_deps, courses, course_reqs, programs, limits
+                requirements,
+                req_deps,
+                courses,
+                course_reqs,
+                programs,
+                limits,
+                selections,
+                constraints,
             )
         except IndexError as index_error:
             sys.stderr.print(f"Unable to read a Catalog from json: {index_error}")

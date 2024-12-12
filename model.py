@@ -27,6 +27,15 @@ class CourseId:
     def __str__(self) -> str:
         return f"{self.dept}_{self.course_number}"
 
+    def to_tuple(self) -> Tuple[str, str]:
+        """Produce a tuple; useful for serialization."""
+        return (self.dept, self.course_number)
+
+    @staticmethod
+    def from_tuple(t: Tuple[str, str]) -> "CourseId":
+        """Produce a CourseId from a tuple; useful for deserialization."""
+        return CourseId(t[0], t[1])
+
 
 @dataclass(order=True)
 class Course:
@@ -84,6 +93,8 @@ class Catalog:
     course_requirements: Dict[Requirement, Set[CourseId]]
     programs: Dict[ProgramId, Program]
     limits: Limits
+    selections: Set[CourseId]
+    constraints: Set[Tuple[str, antichains.Op, str | int]]
 
     @staticmethod
     def _check(d: DiGraph) -> List[List[CourseId]]:
@@ -98,22 +109,36 @@ class Catalog:
                 result.add_edge(pre, post)
         return Catalog.reduce_graph(result)
 
-    def build_courses_graph(self) -> DiGraph:
-        """Induce a `networkx.DiGraph` object over classes from the dependencies.
-        If the resulting graph is cyclic, return the cycles as a list of lists
-        of course IDs.
+    def select_courses(self, p_id: str | ProgramId) -> set[CourseId]:
+        """
+        Select courses sufficient to match every requirement. When there are
+        multiple options, choose randomly between them."""
+        result = set(self.selections)
+        if isinstance(p_id, str):
+            p_id = ProgramId(p_id)
+        program = self.programs[p_id]
+        for requirement in program.requirements:
+            courses = self.course_requirements[requirement]
+            if result & courses:
+                continue
+            result.add(random.choice(list(courses)))
+        # TODO electives
+        return result
 
-        If a requirement can be satisfied by multiple courses, pick one
-        arbitrarily. (Consider making a meta-node with the name of the
-                      requirement instead.)"""
+    def build_courses_graph(self, courses: set[CourseId]) -> DiGraph:
+        """Induce a `networkx.DiGraph` representing the prerequisite
+        dependencies between the specified courses. The resulting graph is the
+        transitive _reduction_ of the relationships between classes. If the
+        resulting graph is cyclic, raise a `CycleException` containing the
+        courses that create the cycle."""
         result: DiGraph = DiGraph()
         for requirement, deps in self.requirement_deps.items():
-            post_course = next(iter(self.course_requirements[requirement]))
-            for dep in deps:
-                pre_course = next(iter(self.course_requirements[dep]))
-                if post_course != pre_course:
-                    result.add_edge(pre_course, post_course)
-        return Catalog.close_graph(result)  # type: ignore
+            for post_course in self.course_requirements[requirement]:
+                for dep in deps:
+                    for pre_course in self.course_requirements[dep]:
+                        if post_course != pre_course:
+                            result.add_edge(pre_course, post_course)
+        return Catalog.reduce_graph(Catalog.close_graph(result).subgraph(courses))  # type: ignore
 
     @staticmethod
     def reduce_graph(graph: DiGraph) -> DiGraph:
@@ -222,21 +247,13 @@ class Catalog:
         self.programs.setdefault(p_id, Program(p_id, set())).requirements.add(req)
 
     def generate_schedule(self, p_id: str | ProgramId) -> antichains.Schedule:
-        """Choose classes that satisfy the program's requirements and put them
-        in a schedule with the appropriate number of terms."""
-        if isinstance(p_id, str):
-            p_id = ProgramId(p_id)
-        program = self.programs[p_id]
-        courses = {
-            random.choice(list(options))
-            for req, options in self.course_requirements.items()
-            if req in program.requirements
-        }
+        """Choose classes that satisfy the program's requirements (using
+        `Catalog.select_courses()`) and put them in a schedule with the
+        appropriate number of terms."""
+        courses = self.select_courses(p_id)
         prereqs = [
             (str(before_id), str(after_id))
-            for (before_id, after_id) in transitive_reduction(
-                self.build_courses_graph().subgraph(courses)
-            ).edges(courses)
+            for (before_id, after_id) in self.build_courses_graph(courses).edges()
         ]
 
         def course_value(c_id: CourseId) -> Tuple[str, int]:
@@ -248,5 +265,6 @@ class Catalog:
             prereqs,
             self.limits.terms,
             self.limits.term_credit_limit,
+            self.constraints,
         )
         return scheduler.generate_schedule()

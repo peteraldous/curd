@@ -1,7 +1,10 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Optional, Tuple
+import math
+import os
+
 from z3 import (
     Const,
     Datatype,
@@ -13,8 +16,6 @@ from z3 import (
     StringSort,
     z3types,
 )
-import math
-import os
 
 Z = IntSort()
 S = StringSort()
@@ -40,7 +41,7 @@ class Op(Enum):
     NE = 6
 
 
-@dataclass
+@dataclass(order=True, frozen=True)
 class Constraint:
     l_course: str
     op: Op
@@ -68,6 +69,7 @@ class Scheduler:
         prereqs: Iterable[Tuple[str, str]],
         term_count: int,
         term_credit_max: int,
+        constraints: Optional[Iterable[Tuple[str, Op, str | int]]] = None,
     ):
         self.solver = Solver()
         self.prereqs = prereqs
@@ -82,6 +84,10 @@ class Scheduler:
         }
         self.counter = 0
 
+        if constraints is not None:
+            for lhs, op, rhs in list(constraints):
+                self.add_constraint(lhs, op, rhs)
+
     def make_course_data(self, name: str, credits: int) -> CourseData:
         term = Const(name + "_term", Z)
         credit_var = Const(name + "_credits", Z)
@@ -93,20 +99,14 @@ class Scheduler:
         )
         return CourseData(term, credit_var)
 
-    def to_const(self, datum: str | ExprRef | int) -> ExprRef:
+    def to_const(self, datum: ExprRef | str | int) -> ExprRef:
         if isinstance(datum, ExprRef):
             return datum
         elif isinstance(datum, str):
             course = self.course_lookup.get(datum)
             if course:
                 return course.term
-            print()
-            print("Courses:")
-            for name, data in self.course_lookup.items():
-                print(f"\t{name}: {data}")
-            print("No more courses")
             raise ValueError("No such course: %s" % datum)
-            return None
         else:
             return IntVal(datum)
 
@@ -115,10 +115,7 @@ class Scheduler:
         self.counter += 1
         return Const(f"total_{term}_{old_counter}", Z)
 
-    def generate_schedule(
-        self,
-        additional_constraints: Optional[List[Constraint]] = None,
-    ) -> Schedule:
+    def generate_schedule(self) -> Schedule:
 
         self.solver.add(self.max_credits <= IntVal(self.term_credit_max))
         self.solver.add(
@@ -128,18 +125,10 @@ class Scheduler:
         def prerequisite(before: ExprRef | str | int, after: ExprRef | str | int):
             self.add_constraint(before, Op.LT, after)
 
-        if additional_constraints:
-            for constraint in additional_constraints:
-                self.add_constraint(
-                    constraint.l_course,
-                    Op.LT,
-                    constraint.r_course,
-                )
-
         for before, after in self.prereqs:
             prerequisite(before, after)
 
-        self.totals: List[ExprRef] = [
+        self.totals: list[ExprRef] = [
             self.make_term_total_variable(index + 1) for index in range(self.term_count)
         ]
         for total in self.totals:
@@ -204,8 +193,8 @@ class Scheduler:
                 # when the solver fails, continue with the last functional model
                 break
 
-        schedule: List[Tuple[int, Set[str]]] = []
-        terms: List[Set[str]] = [set() for _ in range(self.term_count)]
+        schedule: list[Tuple[int, set[str]]] = []
+        terms: list[set[str]] = [set() for _ in range(self.term_count)]
         for name, c in self.course_lookup.items():
             terms[model[c.term].as_long() - 1].add(name)
 
@@ -314,13 +303,17 @@ if __name__ == "__main__":
         ("cs_4450", "cs_4490"),
     ]
 
-    scheduler = Scheduler(courses, prereqs, 8, 18)
-    schedule = scheduler.generate_schedule(
+    scheduler = Scheduler(
+        courses,
+        prereqs,
+        8,
+        18,
         [
-            Constraint("cs_4470", Op.NE, "cs_4490"),
-            Constraint("biol_1610", Op.EQ, "biol_1615"),
+            ("cs_4470", Op.NE, "cs_4490"),
+            ("biol_1610", Op.EQ, "biol_1615"),
         ],
     )
+    schedule = scheduler.generate_schedule()
 
     print(schedule)
 
