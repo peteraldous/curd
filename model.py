@@ -95,6 +95,8 @@ class Catalog:
     limits: Limits
     selections: Set[CourseId]
     constraints: Set[Tuple[str, antichains.Op, str | int]]
+    electives: Set[CourseId]
+    elective_credits: int
 
     @staticmethod
     def _check(d: DiGraph) -> List[List[CourseId]]:
@@ -114,6 +116,7 @@ class Catalog:
         Select courses sufficient to match every requirement. When there are
         multiple options, choose randomly between them."""
         result = set(self.selections)
+        total = 0
         if isinstance(p_id, str):
             p_id = ProgramId(p_id)
         program = self.programs[p_id]
@@ -121,8 +124,32 @@ class Catalog:
             courses = self.course_requirements[requirement]
             if result & courses:
                 continue
-            result.add(random.choice(list(courses)))
-        # TODO electives
+            selection = random.choice(list(courses))
+            total += self.courses[selection].creds
+            result.add(selection)
+
+        elective_choices = list(self.electives - result)
+        random.shuffle(elective_choices)
+        elective_credits = list(
+            map(lambda c_id: self.courses[c_id].creds, elective_choices)
+        )
+        elective_total = sum(elective_credits)
+        while (
+            elective_credits
+            and elective_total - elective_credits[-1] >= self.elective_credits
+        ):
+            elective_choices.pop()
+            elective_total -= elective_credits.pop()
+        result.update(elective_choices)
+        total += elective_total
+
+        if total > self.limits.program_credit_limit:
+            print(
+                f"Warning: the courses selected total {total} credits but the "
+                "specified credit limit for a program is "
+                f"{self.limits.program_credit_limit}."
+            )
+
         return result
 
     def build_courses_graph(self, courses: set[CourseId]) -> DiGraph:

@@ -26,6 +26,8 @@ def test_output():
         Limits(120, 18, 8),
         set(),
         set(),
+        set(),
+        0,
     )
 
     courses = catalog.select_courses("CS")
