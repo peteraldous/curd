@@ -367,7 +367,19 @@
                 "2370"
             ]
         ],
-        "CS 2420": [
+        "Algorithms (basic)": [
+            [
+                "CS",
+                "2420"
+            ]
+        ],
+        "Data structures": [
+            [
+                "CS",
+                "2420"
+            ]
+        ],
+        "Complexity theory": [
             [
                 "CS",
                 "2420"
@@ -379,7 +391,7 @@
                 "2450"
             ]
         ],
-        "CS 2550": [
+        "Web programming (basic)": [
             [
                 "CS",
                 "2550"
@@ -391,7 +403,13 @@
                 "2600"
             ]
         ],
-        "CS 2810": [
+        "Assembly (basic)": [
+            [
+                "CS",
+                "2810"
+            ]
+        ],
+        "Systems architecture (basic)": [
             [
                 "CS",
                 "2810"
@@ -515,7 +533,7 @@
                 "3530"
             ]
         ],
-        "CS 3660": [
+        "Web Programming (advanced)": [
             [
                 "CS",
                 "3660"
@@ -733,13 +751,85 @@
                 "496R"
             ]
         ],
-        "Basic networking": [
+        "OSI Layer 1 (basic)": [
             [
                 "CS",
                 "2600"
             ]
         ],
-        "Advanced networking": [
+        "OSI Layer 2 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 3 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 4 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 5 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 6 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 7 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 1 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 2 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 3 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 4 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 5 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 6 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 7 (advanced)": [
             [
                 "CS",
                 "2690"
@@ -1664,11 +1754,20 @@
                 "Discrete math: graphs",
                 "Discrete math: trees",
                 "Basic C++",
-                "CS 2420",
+                "Algorithms (basic)",
+                "Data structures",
+                "Complexity theory",
                 "CS 2450",
-                "CS 2550",
-                "Basic networking",
-                "CS 2810",
+                "Web programming (basic)",
+                "OSI Layer 1 (basic)",
+                "OSI Layer 2 (basic)",
+                "OSI Layer 3 (basic)",
+                "OSI Layer 4 (basic)",
+                "OSI Layer 5 (basic)",
+                "OSI Layer 6 (basic)",
+                "OSI Layer 7 (basic)",
+                "Assembly (basic)",
+                "Systems architecture (basic)",
                 "CS 305G",
                 "CS 3060",
                 "CS 3100",
@@ -1713,22 +1812,29 @@
             "Basic data structures",
             "Function basics"
         ],
-        "CS 2420": [
+        "Algorithms (basic)": [
+            "recursion"
+        ],
+        "Data structures": [
             "recursion"
         ],
         "CS 2450": [
             "Discrete math: algorithms",
-            "CS 2420"
+            "Algorithms (basic)",
+            "Data structures"
         ],
-        "CS 2550": [
+        "Web programming (basic)": [
             "classes"
         ],
         "CS 2600": [
-            "CS 2810"
+            "Systems architecture (basic)"
         ],
-        "CS 2810": [
+        "Assembly (basic)": [
             "Basic problem solving",
             "Function basics"
+        ],
+        "Systems architecture (basic)": [
+            "Basic problem solving"
         ],
         "CS 305G": [
             "Basic problem solving",
@@ -1736,12 +1842,13 @@
         ],
         "CS 3060": [
             "Basic C++",
-            "CS 2420",
+            "Data structures",
             "CS 2450",
-            "CS 2810"
+            "Systems architecture (basic)",
+            "Assembly (basic)"
         ],
         "CS 3100": [
-            "CS 2420",
+            "Algorithms (basic)",
             "CS 2450"
         ],
         "CS 3240": [
@@ -1752,8 +1859,10 @@
             "Discrete math: induction",
             "Discrete math: graphs",
             "Discrete math: trees",
-            "CS 2420",
-            "CS 2810"
+            "Algorithms (basic)",
+            "Data structures",
+            "Complexity theory",
+            "Systems architecture (basic)"
         ],
         "CS 3310": [
             "CS 2450"
@@ -1763,7 +1872,8 @@
         ],
         "Advanced C++": [
             "Basic C++",
-            "CS 2810"
+            "Assembly (basic)",
+            "Systems architecture (basic)"
         ],
         "3LSD": [
             "CS 2450"
@@ -1780,10 +1890,10 @@
         "CS 3530": [
             "CS 3520"
         ],
-        "CS 3660": [
-            "CS 2420",
+        "Web Programming (advanced)": [
+            "Data structures",
             "CS 2450",
-            "CS 2550"
+            "Web programming (basic)"
         ],
         "CS 3720": [
             "CS 3520"
@@ -1798,7 +1908,9 @@
             "3LSD"
         ],
         "CS 4470": [
-            "CS 2420",
+            "Data structures",
+            "Complexity theory",
+            "Algorithms (basic)",
             "CS 2450",
             "3LSD"
         ],
@@ -1826,7 +1938,11 @@
             "CS 3100"
         ],
         "CS 3140": [
-            "Advanced networking",
+            "OSI Layer 3 (advanced)",
+            "OSI Layer 4 (advanced)",
+            "OSI Layer 5 (advanced)",
+            "OSI Layer 6 (advanced)",
+            "OSI Layer 7 (advanced)",
             "CS 3100"
         ],
         "CS 3540": [
@@ -1873,12 +1989,16 @@
             "CS 3540"
         ],
         "CS 4440": [
-            "CS 2420",
+            "Data structures",
+            "Algorithms (basic)",
+            "Complexity theory",
             "3LSD"
         ],
         "CS 4480": [
             "Discrete math: functions",
-            "CS 2420",
+            "Data structures",
+            "Algorithms (basic)",
+            "Complexity theory",
             "CS 3320"
         ],
         "CS 4500": [
@@ -1890,7 +2010,8 @@
         ],
         "CS 4610": [
             "CS 2450",
-            "Advanced networking"
+            "OSI Layer 3 (advanced)",
+            "OSI Layer 4 (advanced)"
         ],
         "CS 4620": [
             "CS 3520"
@@ -1900,15 +2021,17 @@
             "CS 3520"
         ],
         "CS 4670": [
-            "CS 3660",
+            "Web Programming (advanced)",
             "CS 4610",
             "CS 2450"
         ],
         "CS 4690": [
-            "CS 3660"
+            "Web Programming (advanced)"
         ],
         "CS 4700": [
-            "CS 2420"
+            "Data structures",
+            "Algorithms (basic)",
+            "Complexity theory"
         ],
         "CS 4710": [
             "CS 4700"
@@ -1943,8 +2066,26 @@
         "CS 496R": [
             "CS 2450"
         ],
-        "Advanced networking": [
-            "Basic networking"
+        "OSI Layer 1 (advanced)": [
+            "OSI Layer 1 (basic)"
+        ],
+        "OSI Layer 2 (advanced)": [
+            "OSI Layer 2 (basic)"
+        ],
+        "OSI Layer 3 (advanced)": [
+            "OSI Layer 3 (basic)"
+        ],
+        "OSI Layer 4 (advanced)": [
+            "OSI Layer 4 (basic)"
+        ],
+        "OSI Layer 5 (advanced)": [
+            "OSI Layer 5 (basic)"
+        ],
+        "OSI Layer 6 (advanced)": [
+            "OSI Layer 6 (basic)"
+        ],
+        "OSI Layer 7 (advanced)": [
+            "OSI Layer 7 (basic)"
         ]
     },
 
@@ -1976,11 +2117,17 @@
         "Discrete math: graphs",
         "Discrete math: trees",
         "Basic C++",
-        "CS 2420",
+        "Data structures",
+        "Algorithms (basic)",
+        "Complexity theory",
+        "Algorithms (basic)",
+        "Data structures",
+        "Complexity theory",
         "CS 2450",
-        "CS 2550",
+        "Web programming (basic)",
         "CS 2600",
-        "CS 2810",
+        "Assembly (basic)",
+        "Systems architecture (basic)",
         "CS 305G",
         "CS 3060",
         "CS 3100",
@@ -2006,7 +2153,7 @@
         "CS 3380",
         "CS 3530",
         "CS 3540",
-        "CS 3660",
+        "Web Programming (advanced)",
         "CS 3680",
         "CS 3720",
         "CS 3800",
