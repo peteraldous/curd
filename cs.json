@@ -1,7 +1,7 @@
 {
     "__Catalog__": true,
     "course_reqs": {
-        "ENGL 1010": [
+        "freshman English": [
             [
                 "ENGL",
                 "1010"
@@ -307,7 +307,7 @@
                 "1400"
             ]
         ],
-        "classes": [
+        "OOP classes": [
             [
                 "CS",
                 "1410"
@@ -415,13 +415,37 @@
                 "2810"
             ]
         ],
-        "CS 305G": [
+        "ethics": [
             [
                 "CS",
                 "305G"
             ]
         ],
-        "CS 3060": [
+                "UNIX basics": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "Operating system basics": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "OS scheduling": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "File system basics": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "POSIX system calls": [
             [
                 "CS",
                 "3060"
@@ -433,7 +457,25 @@
                 "3100"
             ]
         ],
-        "CS 3240": [
+        "DFAs; regular languages, expressions, and grammars": [
+            [
+                "CS",
+                "3240"
+            ]
+        ],
+        "PDAs, context-free languages and grammars": [
+            [
+                "CS",
+                "3240"
+            ]
+        ],
+        "TMs, recursively enumerable languages and unrestricted grammars": [
+            [
+                "CS",
+                "3240"
+            ]
+        ],
+        "Rice's theorem": [
             [
                 "CS",
                 "3240"
@@ -1727,7 +1769,7 @@
         [
             "CS",
             [
-                "ENGL 1010",
+                "freshman English",
                 "ENGL 2010",
                 "MATH 1210",
                 "American institutions",
@@ -1745,7 +1787,7 @@
                 "Python function syntax",
                 "Function basics",
                 "recursion",
-                "classes",
+                "OOP classes",
                 "Discrete math: sets",
                 "Discrete math: functions",
                 "Discrete math: formal logic",
@@ -1768,10 +1810,17 @@
                 "OSI Layer 7 (basic)",
                 "Assembly (basic)",
                 "Systems architecture (basic)",
-                "CS 305G",
-                "CS 3060",
+                "ethics",
+                "UNIX basics",
+                "Operating system basics",
+                "OS scheduling",
+                "File system basics",
+                "POSIX system calls",
                 "CS 3100",
-                "CS 3240",
+                "DFAs; regular languages, expressions, and grammars",
+                "PDAs, context-free languages and grammars",
+                "TMs, recursively enumerable languages and unrestricted grammars",
+                "Rice's theorem",
                 "CS 3520",
                 "STAT 2050",
                 "3LSD",
@@ -1791,7 +1840,7 @@
             "Python function syntax",
             "Function basics"
         ],
-        "classes": [
+        "OOP classes": [
             "Basic problem solving",
             "Basic data structures",
             "Python arithmetic operations",
@@ -1824,7 +1873,7 @@
             "Data structures"
         ],
         "Web programming (basic)": [
-            "classes"
+            "OOP classes"
         ],
         "CS 2600": [
             "Systems architecture (basic)"
@@ -1836,33 +1885,75 @@
         "Systems architecture (basic)": [
             "Basic problem solving"
         ],
-        "CS 305G": [
+        "ethics": [
             "Basic problem solving",
             "ENGL 2010"
         ],
-        "CS 3060": [
+        "UNIX basics": [
+            "Basic C++",
+            "Systems architecture (basic)",
+            "Assembly (basic)"
+        ],
+        "Operating system basics": [
+            "Basic C++",
+            "CS 2450",
+            "Systems architecture (basic)"
+        ],
+        "OS scheduling": [
+            "Data structures",
+            "CS 2450",
+            "Systems architecture (basic)",
+            "Assembly (basic)"
+        ],
+        "File system basics": [
             "Basic C++",
             "Data structures",
             "CS 2450",
             "Systems architecture (basic)",
             "Assembly (basic)"
         ],
+        "POSIX system calls": [
+            "Basic C++",
+            "Data structures",
+            "CS 2450",
+            "Systems architecture (basic)"
+        ],
         "CS 3100": [
             "Algorithms (basic)",
             "CS 2450"
         ],
-        "CS 3240": [
+        "DFAs; regular languages, expressions, and grammars": [
             "Discrete math: sets",
             "Discrete math: functions",
             "Discrete math: formal logic",
             "Discrete math: algorithms",
             "Discrete math: induction",
             "Discrete math: graphs",
-            "Discrete math: trees",
-            "Algorithms (basic)",
-            "Data structures",
-            "Complexity theory",
-            "Systems architecture (basic)"
+            "Complexity theory"
+        ],
+        "PDAs, context-free languages and grammars": [
+            "DFAs; regular languages, expressions, and grammars",
+            "Discrete math: sets",
+            "Discrete math: functions",
+            "Discrete math: formal logic",
+            "Discrete math: algorithms",
+            "Discrete math: induction",
+            "Discrete math: graphs",
+            "Complexity theory"
+        ],
+        "TMs, recursively enumerable languages and unrestricted grammars": [
+            "DFAs; regular languages, expressions, and grammars",
+            "PDAs, context-free languages and grammars",
+            "Discrete math: sets",
+            "Discrete math: functions",
+            "Discrete math: formal logic",
+            "Discrete math: algorithms",
+            "Discrete math: induction",
+            "Discrete math: graphs",
+            "Complexity theory"
+        ],
+        "Rice's theorem": [
+            "TMs, recursively enumerable languages and unrestricted grammars"
         ],
         "CS 3310": [
             "CS 2450"
@@ -1899,12 +1990,15 @@
             "CS 3520"
         ],
         "CS 4380": [
+            "Assembly (basic)",
             "CS 2450",
-            "CS 3060"
+            "Operating system basics",
+            "File system basics",
+            "POSIX system calls"
         ],
         "CS 4450": [
             "CS 2450",
-            "CS 3240",
+            "Rice's theorem",
             "3LSD"
         ],
         "CS 4470": [
@@ -1920,7 +2014,7 @@
             "CS 4450"
         ],
         "ENGL 2010": [
-            "ENGL 1010"
+            "freshman English"
         ],
 
         "CS 2700": [
@@ -2090,7 +2184,7 @@
     },
 
     "requirements": [
-        "ENGL 1010",
+        "freshman English",
         "ENGL 2010",
         "MATH 1210",
         "American institutions",
@@ -2107,7 +2201,7 @@
         "Python arithmetic operations",
         "Python function syntax",
         "Function basics",
-        "classes",
+        "OOP classes",
         "recursion",
         "Discrete math: sets",
         "Discrete math: functions",
@@ -2128,10 +2222,17 @@
         "CS 2600",
         "Assembly (basic)",
         "Systems architecture (basic)",
-        "CS 305G",
-        "CS 3060",
+        "ethics",
+        "UNIX basics",
+        "Operating system basics",
+        "OS scheduling",
+        "File system basics",
+        "POSIX system calls",
         "CS 3100",
-        "CS 3240",
+        "DFAs; regular languages, expressions, and grammars",
+        "PDAs, context-free languages and grammars",
+        "TMs, recursively enumerable languages and unrestricted grammars",
+        "Rice's theorem",
         "CS 3520",
         "STAT 2050",
         "3LSD",
