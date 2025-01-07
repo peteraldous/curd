@@ -61,8 +61,6 @@ class CatalogEncoder(json.JSONEncoder):
                     (left_course, op.value, right_course)
                     for left_course, op, right_course in o.constraints
                 ],
-                "electives": [elective.to_tuple() for elective in o.electives],
-                "elective_credits": o.elective_credits,
             }
         return json.JSONEncoder.default(self, o)
 
@@ -103,8 +101,6 @@ def catalog_hook(dct):
                 (str(CourseId.from_tuple(lhs)), Op(op), course_str_or_int(rhs))
                 for lhs, op, rhs in dct.get("constraints", set())
             }
-            electives = {CourseId.from_tuple(t) for t in dct.get("electives", set())}
-            elective_credits = dct["elective_credits"]
             return Catalog(
                 requirements,
                 req_deps,
@@ -114,8 +110,6 @@ def catalog_hook(dct):
                 limits,
                 selections,
                 constraints,
-                electives,
-                elective_credits,
             )
         except IndexError as index_error:
             sys.stderr.print(f"Unable to read a Catalog from json: {index_error}")

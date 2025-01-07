@@ -23,14 +23,13 @@ def test_output():
         {cs1400_id: cs1400, cs1410_id: cs1410},
         {basics: {cs1400_id}, oop: {cs1410_id}},
         {cs_id: cs_cs},
-        Limits(120, 18, 8),
+        Limits(6, 3, 2),
         set(),
         set(),
-        set(),
-        0,
     )
 
-    courses = catalog.select_courses("CS")
+    required, electives = catalog.select_courses("CS")
+    courses = required | electives
     graph = Catalog.reduce_graph(catalog.build_courses_graph(courses))
     networkx.nx_pydot.write_dot(graph, "small.dot")
 
@@ -44,9 +43,11 @@ def test_input():
     with open("cs.json", "r", encoding="utf-8") as json_file:
         catalog = json.load(json_file, object_hook=catalog_hook)
 
-    print(f"Successfully read JSON back:\n\n{catalog}")
-
-    courses = catalog.select_courses("CS")
+    required, electives = catalog.select_courses("CS")
+    print(
+        f"{sum(map(lambda c: catalog.courses[c].creds, electives))} total elective credits"
+    )
+    courses = required | electives
     graph = catalog.build_courses_graph(courses)
     networkx.nx_pydot.write_dot(graph, "concepts.dot")
 

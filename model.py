@@ -36,6 +36,18 @@ class CourseId:
         """Produce a CourseId from a tuple; useful for deserialization."""
         return CourseId(t[0], t[1])
 
+    def is_elective(self) -> bool:
+        """Determine if this course can be used as an elective.
+
+        For now, this is hard-coded for UVU's requirements. Consider creating a
+        more general way to express this.
+        """
+        return (
+            self.dept == "CS"
+            and len(self.course_number) > 0
+            and (int(self.course_number[0]) >= 3 or self.course_number == "2700")
+        )
+
 
 @dataclass(order=True)
 class Course:
@@ -95,8 +107,6 @@ class Catalog:
     limits: Limits
     selections: Set[CourseId]
     constraints: Set[Tuple[str, antichains.Op, str | int]]
-    electives: Set[CourseId]
-    elective_credits: int
 
     @staticmethod
     def _check(d: DiGraph) -> List[List[CourseId]]:
@@ -111,37 +121,55 @@ class Catalog:
                 result.add_edge(pre, post)
         return Catalog.reduce_graph(result)
 
-    def select_courses(self, p_id: str | ProgramId) -> set[CourseId]:
+    def select_courses(
+        self, p_id: str | ProgramId
+    ) -> Tuple[set[CourseId], set[CourseId]]:
         """
         Select courses sufficient to match every requirement. When there are
         multiple options, choose randomly between them."""
-        result = set(self.selections)
-        total = 0
         if isinstance(p_id, str):
             p_id = ProgramId(p_id)
         program = self.programs[p_id]
+
+        pre_select = set(self.selections)
+        required: set[CourseId] = set()
+
         for requirement in program.requirements:
             courses = self.course_requirements[requirement]
-            if result & courses:
+            pre = pre_select & courses
+            if pre:
+                choice = pre.pop()
+                pre_select.remove(choice)
+                required.add(choice)
                 continue
-            selection = random.choice(list(courses))
-            total += self.courses[selection].creds
-            result.add(selection)
+            if required & courses:
+                continue
+            required.add(random.choice(list(courses)))
+        total_required = sum(map(lambda c: self.courses[c].creds, required))
 
-        elective_choices = list(self.electives - result)
-        random.shuffle(elective_choices)
-        elective_credits = list(
-            map(lambda c_id: self.courses[c_id].creds, elective_choices)
+        electives: set[CourseId] = pre_select
+        total_elective = sum(
+            map(
+                lambda c: self.courses[c].creds,
+                filter(lambda c: c.is_elective(), pre_select),
+            )
         )
-        elective_total = sum(elective_credits)
-        while (
-            elective_credits
-            and elective_total - elective_credits[-1] >= self.elective_credits
-        ):
-            elective_choices.pop()
-            elective_total -= elective_credits.pop()
-        result.update(elective_choices)
-        total += elective_total
+        elective_options = list(
+            filter(
+                lambda cid: cid.is_elective(),
+                set(self.courses) - (required | electives),
+            )
+        )
+        random.shuffle(elective_options)
+        while total_elective < self.limits.program_credit_limit - total_required:
+            if not elective_options:
+                print("Warning: insufficient electives to complete the program")
+                break
+            selection = elective_options.pop()
+            electives.add(selection)
+            total_elective += self.courses[selection].creds
+
+        total = total_required + total_elective
 
         if total > self.limits.program_credit_limit:
             print(
@@ -150,7 +178,7 @@ class Catalog:
                 f"{self.limits.program_credit_limit}."
             )
 
-        return result
+        return (required, electives)
 
     def build_courses_graph(self, courses: set[CourseId]) -> DiGraph:
         """Induce a `networkx.DiGraph` representing the prerequisite
@@ -277,7 +305,8 @@ class Catalog:
         """Choose classes that satisfy the program's requirements (using
         `Catalog.select_courses()`) and put them in a schedule with the
         appropriate number of terms."""
-        courses = self.select_courses(p_id)
+        required, electives = self.select_courses(p_id)
+        courses = required | electives
         prereqs = [
             (str(before_id), str(after_id))
             for (before_id, after_id) in self.build_courses_graph(courses).edges()
