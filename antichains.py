@@ -39,6 +39,7 @@ class Op(Enum):
     GE = 4
     EQ = 5
     NE = 6
+    PAR = 7
 
 
 @dataclass(order=True, frozen=True)
@@ -176,6 +177,8 @@ class Scheduler:
                 self.solver.add(l_const == r_const)
             case Op.NE:
                 self.solver.add(l_const != r_const)
+            case Op.PAR:
+                self.solver.add((l_const % IntVal(2)) == (r_const % IntVal(2)))
             case _:
                 raise ValueError("%s is not an Op!" % (op,))
 
