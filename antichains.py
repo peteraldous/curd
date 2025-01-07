@@ -72,6 +72,7 @@ class Scheduler:
         constraints: Optional[Iterable[Tuple[str, Op, str | int]]] = None,
     ):
         self.solver = Solver()
+        self.solver.set("timeout", 600)
         self.prereqs = prereqs
         self.term_count = term_count
         self.term_credit_max = term_credit_max
@@ -108,6 +109,8 @@ class Scheduler:
                 return course.term
             raise ValueError("No such course: %s" % datum)
         else:
+            if datum < 1:
+                datum += self.term_count
             return IntVal(datum)
 
     def make_term_total_variable(self, term: int):
@@ -182,6 +185,7 @@ class Scheduler:
         term_credit_max = self.term_credit_max
 
         attempt_solver = self.solver.__copy__()
+        attempt_solver.set("timeout", 600)
         # attempt to find a solution with a tighter bound to even the semesters out
         while True:
             term_credit_max -= 1
