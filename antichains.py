@@ -4,6 +4,8 @@ from enum import Enum
 from typing import Optional, Tuple
 import math
 import os
+import pydot
+import sys
 
 from z3 import (
     Const,

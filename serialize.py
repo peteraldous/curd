@@ -47,10 +47,11 @@ class CatalogEncoder(json.JSONEncoder):
                     for (req, courses) in o.course_requirements.items()
                 },
                 "programs": [
-                    (
-                        program.p_id.name,
-                        [requirement.name for requirement in program.requirements],
-                    )
+                    {
+                        program.p_id.name: [
+                            requirement.name for requirement in program.requirements
+                        ],
+                    }
                     for program in o.programs.values()
                 ],
                 "program_credit_limit": o.limits.program_credit_limit,
@@ -88,7 +89,7 @@ def catalog_hook(dct):
                 for (req_name, courses) in dct["course_reqs"].items()
             }
             programs = {}
-            for name, requirements in dct["programs"]:
+            for name, requirements in dct["programs"].items():
                 p_id = ProgramId(name)
                 programs[p_id] = Program(
                     p_id, {Requirement(name) for name in requirements}

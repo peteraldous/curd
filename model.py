@@ -1,9 +1,16 @@
 """Data structures for curriculum design"""
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Optional, Set, Tuple
-from networkx import chordless_cycles, transitive_closure, transitive_reduction, DiGraph
+from typing import Dict, Iterable, Optional, Set, Tuple
+from networkx import (
+    chordless_cycles,
+    immediate_dominators,
+    transitive_closure,
+    transitive_reduction,
+    DiGraph,
+)
 
+import pydot
 import random
 
 import antichains
@@ -93,7 +100,7 @@ class Limits:
 
 @dataclass
 class CycleException(ValueError):
-    cycles: List[List[CourseId]]
+    cycles: list[list[CourseId]]
 
 
 @dataclass
@@ -109,8 +116,30 @@ class Catalog:
     constraints: Set[Tuple[str, antichains.Op, str | int]]
 
     @staticmethod
-    def _check(d: DiGraph) -> List[List[CourseId]]:
+    def _check(d: DiGraph) -> list[list[CourseId]]:
         return sorted(list(chordless_cycles(d)))
+
+    @staticmethod
+    def bottlenecks(d: DiGraph):
+        flow = d.copy()
+        flow.add_node("source")
+        for node in d.nodes:
+            if d.in_degree(node) == 0:
+                flow.add_edge("source", node)
+            if d.out_degree(node) == 0:
+                flow.add_edge(node, "sink")
+        dom_tree = immediate_dominators(flow, "source")
+        bottlenecks = {dom_tree["sink"]}
+        print(bottlenecks)
+        frontier = set(bottlenecks)
+        while frontier:
+            node = frontier.pop()
+            dom = dom_tree[node]
+            if dom == "source" or dom in bottlenecks:
+                continue
+            bottlenecks.add(node)
+            frontier.add(node)
+        return bottlenecks
 
     def reqs_graph(self) -> DiGraph:
         """Create a `networkx.DiGraph` object to show the relationships between
@@ -133,6 +162,11 @@ class Catalog:
 
         pre_select = set(self.selections)
         required: set[CourseId] = set()
+
+        requirements = program.requirements
+        gens = ProgramId("generals")
+        if gens in self.programs:
+            requirements |= self.programs[gens].requirements
 
         for requirement in program.requirements:
             courses = self.course_requirements[requirement]
@@ -323,4 +357,43 @@ class Catalog:
             self.limits.term_credit_limit,
             self.constraints,
         )
-        return scheduler.generate_schedule()
+        return self.dot(scheduler.generate_schedule(), prereqs)
+
+    def dot(
+        self, schedule: antichains.Schedule, prereqs: list[Tuple[str, str]]
+    ) -> pydot.Graph:
+        graph = pydot.Dot("schedule", graph_type="digraph")
+        # graph.set("ordering", "out")
+        graph.set("compound", "true")
+        graph.set("rankdir", "LR")
+        graph.set("ranksep", "1.0 equally")
+        nodes: dict[str, pydot.Node] = {}
+        last: Optional[pydot.Subgraph] = None
+        for index, (total, classes) in enumerate(schedule.schedule):
+            term = index + 1
+            subgraph = pydot.Subgraph(f"cluster_term_{term}", label=f"Term {term}")
+            for c in sorted(classes):
+                nodes[c] = pydot.Node(c, shape="box")
+                subgraph.add_node(nodes[c])
+            graph.add_subgraph(subgraph)
+            if last:
+                graph.add_edge(
+                    pydot.Edge(
+                        last.get_nodes()[0],
+                        subgraph.get_nodes()[0],
+                        ltail=last.get_name(),
+                        lhead=subgraph.get_name(),
+                        style="invis",
+                    )
+                )
+            last = subgraph
+        for before, after in prereqs:
+            graph.add_edge(
+                pydot.Edge(
+                    nodes[before],
+                    nodes[after],
+                    splines="ortho",
+                    constraint="false",
+                )
+            )
+        return graph
