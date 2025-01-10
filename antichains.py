@@ -72,6 +72,7 @@ class Scheduler:
         prereqs: Iterable[Tuple[str, str]],
         term_count: int,
         term_credit_max: int,
+        terms_past: int,
         constraints: Optional[Iterable[Tuple[str, Op, str | int]]] = None,
     ):
         self.solver = Solver()
@@ -82,20 +83,35 @@ class Scheduler:
         self.max_credits = Const("max_credits", Z)
         courses = sorted(courses)
         self.total_required = sum(map(lambda p: p[1], courses))
+
+        if constraints is None:
+            constraints = []
+        else:
+            constraints = list(constraints)
+
+        past_courses: set[str] = set()
+
+        for lhs, op, rhs in constraints:
+            if isinstance(rhs, int) and rhs <= terms_past:
+                past_courses.add(lhs)
+
         self.course_lookup = {
-            name: self.make_course_data(name, credits)
+            name: self.make_course_data(
+                name, credits, 0 if name in past_courses else terms_past
+            )
             for (name, credits) in sorted(courses)
         }
         self.counter = 0
 
-        if constraints is not None:
-            for lhs, op, rhs in list(constraints):
-                self.add_constraint(lhs, op, rhs)
+        for lhs, op, rhs in constraints:
+            self.add_constraint(lhs, op, rhs)
 
-    def make_course_data(self, name: str, credits: int) -> CourseData:
+    def make_course_data(
+        self, name: str, credits: int, term_infimum: int
+    ) -> CourseData:
         term = Const(name + "_term", Z)
         credit_var = Const(name + "_credits", Z)
-        self.solver.add(term > 0, term <= self.term_count)
+        self.solver.add(term > term_infimum, term <= self.term_count)
         self.solver.add(
             credit_var == IntVal(credits),
             credit_var > 0,

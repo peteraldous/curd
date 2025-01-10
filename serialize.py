@@ -57,6 +57,7 @@ class CatalogEncoder(json.JSONEncoder):
                 "program_credit_limit": o.limits.program_credit_limit,
                 "term_credit_limit": o.limits.term_credit_limit,
                 "term_limit": o.limits.terms,
+                "terms_past": o.limits.terms_past,
                 "selections": [course.to_tuple() for course in o.selections],
                 "constraints": [
                     (left_course, op.value, right_course)
@@ -95,7 +96,10 @@ def catalog_hook(dct):
                     p_id, {Requirement(name) for name in requirements}
                 )
             limits = Limits(
-                dct["program_credit_limit"], dct["term_credit_limit"], dct["term_limit"]
+                dct["program_credit_limit"],
+                dct["term_credit_limit"],
+                dct["term_limit"],
+                dct["terms_past"],
             )
             selections = {CourseId.from_tuple(t) for t in dct.get("selections", set())}
             constraints = {

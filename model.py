@@ -96,6 +96,7 @@ class Limits:
     program_credit_limit: int = 120
     term_credit_limit: int = 18
     terms: int = 8
+    terms_past: int = 0
 
 
 @dataclass
@@ -355,6 +356,7 @@ class Catalog:
             prereqs,
             self.limits.terms,
             self.limits.term_credit_limit,
+            self.limits.terms_past,
             self.constraints,
         )
         return self.dot(scheduler.generate_schedule(), prereqs)
