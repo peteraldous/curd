@@ -842,43 +842,43 @@
         "OSI Layer 4 (basic)": [
             [
                 "CS",
-                "2600"
+                "2690"
             ]
         ],
         "OSI Layer 5 (basic)": [
             [
                 "CS",
-                "2600"
+                "2690"
             ]
         ],
         "OSI Layer 6 (basic)": [
             [
                 "CS",
-                "2600"
+                "2690"
             ]
         ],
         "OSI Layer 7 (basic)": [
             [
                 "CS",
-                "2600"
+                "2690"
             ]
         ],
         "OSI Layer 1 (advanced)": [
             [
                 "CS",
-                "2690"
+                "2600"
             ]
         ],
         "OSI Layer 2 (advanced)": [
             [
                 "CS",
-                "2690"
+                "2600"
             ]
         ],
         "OSI Layer 3 (advanced)": [
             [
                 "CS",
-                "2690"
+                "2600"
             ]
         ],
         "OSI Layer 4 (advanced)": [
@@ -2186,6 +2186,18 @@
         ],
         "CS 496R": [
             "CS 2450"
+        ],
+        "OSI Layer 1 (basic)": [
+            "Systems architecture (basic)"
+        ],
+        "OSI Layer 2 (basic)": [
+            "Systems architecture (basic)"
+        ],
+        "OSI Layer 3 (basic)": [
+            "Systems architecture (basic)"
+        ],
+        "OSI Layer 7 (basic)": [
+            "Web programming (basic)"
         ],
         "OSI Layer 1 (advanced)": [
             "OSI Layer 1 (basic)"
