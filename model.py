@@ -1,7 +1,7 @@
 """Data structures for curriculum design"""
 
 from dataclasses import dataclass
-from typing import Dict, Iterable, Optional, Set, Tuple
+from typing import Dict, Iterable, Optional, Tuple
 from networkx import (
     chordless_cycles,
     immediate_dominators,
@@ -43,6 +43,13 @@ class CourseId:
         """Produce a CourseId from a tuple; useful for deserialization."""
         return CourseId(t[0], t[1])
 
+    @staticmethod
+    def from_str(s: str) -> "CourseId":
+        pieces = s.split("_")
+        assert len(pieces) == 2
+        id_tuple = (pieces[0], pieces[1])
+        return CourseId.from_tuple(id_tuple)
+
     def is_elective(self) -> bool:
         """Determine if this course can be used as an elective.
 
@@ -81,7 +88,7 @@ class Program:
     "A degree or emphasis"
 
     p_id: ProgramId
-    requirements: Set[Requirement]
+    requirements: set[Requirement]
 
     def fits(self, limits: "Limits"):
         """Determine if the program fits within the specified credit and term
@@ -107,14 +114,14 @@ class CycleException(ValueError):
 @dataclass
 class Catalog:
     "A course catalog"
-    requirements: Set[Requirement]
-    requirement_deps: Dict[Requirement, Set[Requirement]]
+    requirements: set[Requirement]
+    requirement_deps: Dict[Requirement, set[Requirement]]
     courses: Dict[CourseId, Course]
-    course_requirements: Dict[Requirement, Set[CourseId]]
+    course_requirements: Dict[Requirement, set[CourseId]]
     programs: Dict[ProgramId, Program]
     limits: Limits
-    selections: Set[CourseId]
-    constraints: Set[Tuple[str, antichains.Op, str | int]]
+    selections: set[CourseId]
+    constraints: set[Tuple[str, antichains.Op, str | int]]
 
     @staticmethod
     def _check(d: DiGraph) -> list[list[CourseId]]:
@@ -321,7 +328,7 @@ class Catalog:
     ):
         """Add a program to the catalog. Requirements may optionally be
         specified that pertain to the program."""
-        reqs: Set[Requirement] = set()
+        reqs: set[Requirement] = set()
         if requirements is not None:
             reqs = set(map(Catalog._get_requirement, requirements))
         p_id = Catalog._get_program(name)
@@ -359,25 +366,37 @@ class Catalog:
             self.limits.terms_past,
             self.constraints,
         )
-        return self.dot(scheduler.generate_schedule(), prereqs)
+        return self.dot(scheduler.generate_schedule(), required)
 
     def dot(
-        self, schedule: antichains.Schedule, prereqs: list[Tuple[str, str]]
+        self,
+        schedule: antichains.Schedule,
+        required: set[CourseId],
     ) -> pydot.Graph:
-        graph = pydot.Dot("schedule", graph_type="digraph")
-        # graph.set("ordering", "out")
-        graph.set("compound", "true")
-        graph.set("rankdir", "LR")
-        graph.set("ranksep", "1.0 equally")
+        graph = pydot.Dot(
+            "schedule", graph_type="digraph", compound="true", rankdir="LR"
+        )
         nodes: dict[str, pydot.Node] = {}
-        last: Optional[pydot.Subgraph] = None
+        terms: dict[str, int] = {}
+        last = None
         for index, (total, classes) in enumerate(schedule.schedule):
             term = index + 1
-            subgraph = pydot.Subgraph(f"cluster_term_{term}", label=f"Term {term}")
-            for c in sorted(classes):
-                nodes[c] = pydot.Node(c, shape="box")
-                subgraph.add_node(nodes[c])
+            credit_total = 0
+            for c in classes:
+                credit_total += self.courses[CourseId.from_str(c)].creds
+            subgraph = pydot.Subgraph(
+                f"cluster_term_{term}",
+                label=f"Term {term} ({credit_total})",
+                rankdir="TB",
+            )
             graph.add_subgraph(subgraph)
+            for c in sorted(classes):
+                c_id = CourseId.from_str(c)
+                terms[c] = term
+                nodes[c] = pydot.Node(c, shape="box")
+                if c_id not in required:
+                    nodes[c].set("style", "dashed")
+                subgraph.add_node(nodes[c])
             if last:
                 graph.add_edge(
                     pydot.Edge(
@@ -389,13 +408,4 @@ class Catalog:
                     )
                 )
             last = subgraph
-        for before, after in prereqs:
-            graph.add_edge(
-                pydot.Edge(
-                    nodes[before],
-                    nodes[after],
-                    splines="ortho",
-                    constraint="false",
-                )
-            )
         return graph
