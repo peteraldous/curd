@@ -842,43 +842,43 @@
         "OSI Layer 4 (basic)": [
             [
                 "CS",
-                "2690"
+                "2600"
             ]
         ],
         "OSI Layer 5 (basic)": [
             [
                 "CS",
-                "2690"
+                "2600"
             ]
         ],
         "OSI Layer 6 (basic)": [
             [
                 "CS",
-                "2690"
+                "2600"
             ]
         ],
         "OSI Layer 7 (basic)": [
             [
                 "CS",
-                "2690"
+                "2600"
             ]
         ],
         "OSI Layer 1 (advanced)": [
             [
                 "CS",
-                "2600"
+                "2690"
             ]
         ],
         "OSI Layer 2 (advanced)": [
             [
                 "CS",
-                "2600"
+                "2690"
             ]
         ],
         "OSI Layer 3 (advanced)": [
             [
                 "CS",
-                "2600"
+                "2690"
             ]
         ],
         "OSI Layer 4 (advanced)": [
@@ -2327,6 +2327,10 @@
     ],
 
     "selections": [
+        [
+            "CS",
+            "1420"
+        ]
     ],
 
     "constraints": [
