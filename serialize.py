@@ -1,6 +1,6 @@
 """Serialization and deserialization for the classes in the data model"""
 
-from typing import Tuple
+from typing import Any, Tuple
 
 import json
 import sys
@@ -60,14 +60,17 @@ class CatalogEncoder(json.JSONEncoder):
                 "terms_past": o.limits.terms_past,
                 "selections": [course.to_tuple() for course in o.selections],
                 "constraints": [
-                    (left_course, op.value, right_course)
-                    for left_course, op, right_course in o.constraints
+                    [
+                        (left_course, op.value, right_course)
+                        for left_course, op, right_course in disjunction
+                    ]
+                    for disjunction in o.constraints
                 ],
             }
         return json.JSONEncoder.default(self, o)
 
 
-def catalog_hook(dct):
+def catalog_hook(dct: dict[str, Any]):
     "Attempt to read a Catalog from JSON"
 
     if "__Catalog__" in dct:
@@ -90,11 +93,9 @@ def catalog_hook(dct):
                 for (req_name, courses) in dct["course_reqs"].items()
             }
             programs = {}
-            for name, requirements in dct["programs"].items():
+            for name, reqs in dct["programs"].items():
                 p_id = ProgramId(name)
-                programs[p_id] = Program(
-                    p_id, {Requirement(name) for name in requirements}
-                )
+                programs[p_id] = Program(p_id, {Requirement(name) for name in reqs})
             limits = Limits(
                 dct["program_credit_limit"],
                 dct["term_credit_limit"],
@@ -102,10 +103,13 @@ def catalog_hook(dct):
                 dct["terms_past"],
             )
             selections = {CourseId.from_tuple(t) for t in dct.get("selections", set())}
-            constraints = {
-                (str(CourseId.from_tuple(lhs)), Op(op), course_str_or_int(rhs))
-                for lhs, op, rhs in dct.get("constraints", set())
-            }
+            constraints: list[set[Tuple[str, Op, str | int]]] = [
+                {
+                    (str(CourseId.from_tuple(lhs)), Op(op), course_str_or_int(rhs))
+                    for lhs, op, rhs in disjunction
+                }
+                for disjunction in dct.get("constraints", set())
+            ]
             return Catalog(
                 requirements,
                 req_deps,
@@ -117,5 +121,5 @@ def catalog_hook(dct):
                 constraints,
             )
         except IndexError as index_error:
-            sys.stderr.print(f"Unable to read a Catalog from json: {index_error}")
+            print(f"Unable to read a Catalog from json: {index_error}", file=sys.stderr)
     return dct

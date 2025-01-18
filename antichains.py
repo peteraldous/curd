@@ -8,12 +8,14 @@ import pydot
 import sys
 
 from z3 import (
+    BoolRef,
     Const,
     Datatype,
     ExprRef,
     Implies,
     IntSort,
     IntVal,
+    Or,
     Solver,
     StringSort,
     z3types,
@@ -73,7 +75,7 @@ class Scheduler:
         term_count: int,
         term_credit_max: int,
         terms_past: int,
-        constraints: Optional[Iterable[Tuple[str, Op, str | int]]] = None,
+        constraints: Optional[Iterable[Iterable[Tuple[str, Op, str | int]]]] = None,
     ):
         self.solver = Solver()
         self.solver.set("timeout", 600)
@@ -89,13 +91,15 @@ class Scheduler:
         if constraints is None:
             constraints = []
         else:
-            constraints = list(constraints)
+            constraints = list(map(list, constraints))
 
         past_courses: set[str] = set()
 
-        for lhs, op, rhs in constraints:
-            if isinstance(rhs, int) and rhs <= terms_past:
-                past_courses.add(lhs)
+        print(constraints)
+        for disjunction in constraints:
+            for lhs, op, rhs in disjunction:
+                if isinstance(rhs, int) and rhs <= terms_past:
+                    past_courses.add(lhs)
 
         self.course_lookup = {
             name: self.make_course_data(
@@ -105,8 +109,8 @@ class Scheduler:
         }
         self.counter = 0
 
-        for lhs, op, rhs in constraints:
-            self.add_constraint(lhs, op, rhs)
+        for disjunction in constraints:
+            self.add_constraints(disjunction)
 
     def make_course_data(
         self, name: str, credits: int, term_infimum: int
@@ -187,30 +191,40 @@ class Scheduler:
 
         return self.update()
 
-    def add_constraint(
+    def make_constraint(
         self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int
-    ):
+    ) -> BoolRef:
         l_const = self.to_const(l_course)
         r_const = self.to_const(r_course)
         # if l_const is None or r_const is None:
         # return
         match op:
             case Op.LT:
-                self.solver.add(l_const < r_const)
+                return l_const < r_const
             case Op.LE:
-                self.solver.add(l_const <= r_const)
+                return l_const <= r_const
             case Op.GT:
-                self.solver.add(l_const > r_const)
+                return l_const > r_const
             case Op.GE:
-                self.solver.add(l_const >= r_const)
+                return l_const >= r_const
             case Op.EQ:
-                self.solver.add(l_const == r_const)
+                return l_const == r_const
             case Op.NE:
-                self.solver.add(l_const != r_const)
+                return l_const != r_const
             case Op.PAR:
-                self.solver.add((l_const % IntVal(2)) == (r_const % IntVal(2)))
+                return (l_const % IntVal(2)) == (r_const % IntVal(2))
             case _:
                 raise ValueError("%s is not an Op!" % (op,))
+
+    def add_constraint(
+        self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int
+    ):
+        self.solver.add(self.make_constraint(l_course, op, r_course))
+
+    def add_constraints(
+        self, triples: Iterable[Tuple[ExprRef | str | int, Op, ExprRef | str | int]]
+    ):
+        self.solver.add(Or(*map(lambda t: self.make_constraint(*t), triples)))
 
     def update(self) -> Schedule:
         self.solver.check()
@@ -345,9 +359,10 @@ if __name__ == "__main__":
         prereqs,
         8,
         18,
+        0,
         [
-            ("cs_4470", Op.NE, "cs_4490"),
-            ("biol_1610", Op.EQ, "biol_1615"),
+            [("cs_4470", Op.NE, "cs_4490")],
+            [("biol_1610", Op.EQ, "biol_1615")],
         ],
     )
     schedule = scheduler.generate_schedule()

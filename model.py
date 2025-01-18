@@ -121,7 +121,7 @@ class Catalog:
     programs: Dict[ProgramId, Program]
     limits: Limits
     selections: set[CourseId]
-    constraints: set[Tuple[str, antichains.Op, str | int]]
+    constraints: list[set[Tuple[str, antichains.Op, str | int]]]
 
     @staticmethod
     def _check(d: DiGraph) -> list[list[CourseId]]:

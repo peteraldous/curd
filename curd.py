@@ -51,11 +51,12 @@ def test_input():
     graph = catalog.build_courses_graph(courses)
     networkx.nx_pydot.write_dot(graph, "concepts.dot")
 
-    req_graph = catalog.build_courses_graph(required)
-    print("bottlenecks:")
-    for b in Catalog.bottlenecks(req_graph):
-        print(f"\t{b}")
-    print()
+    if False:
+        req_graph = catalog.build_courses_graph(required)
+        print("bottlenecks:")
+        for b in Catalog.bottlenecks(req_graph):
+            print(f"\t{b}")
+        print()
 
     with open("order.txt", "w", encoding="utf-8") as order:
         for post, pre in Catalog.close_graph(graph).edges:
