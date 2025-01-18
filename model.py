@@ -222,20 +222,43 @@ class Catalog:
 
         return (required, electives)
 
-    def build_courses_graph(self, courses: set[CourseId]) -> DiGraph:
+    def build_courses_graph(self, courses: Optional[set[CourseId]] = None) -> DiGraph:
         """Induce a `networkx.DiGraph` representing the prerequisite
         dependencies between the specified courses. The resulting graph is the
         transitive _reduction_ of the relationships between classes. If the
         resulting graph is cyclic, raise a `CycleException` containing the
         courses that create the cycle."""
         result: DiGraph = DiGraph()
+        if courses is None:
+            courses = set()
         for requirement, deps in self.requirement_deps.items():
             for post_course in self.course_requirements[requirement]:
                 for dep in deps:
                     for pre_course in self.course_requirements[dep]:
                         if post_course != pre_course:
                             result.add_edge(pre_course, post_course)
-        return Catalog.reduce_graph(Catalog.close_graph(result).subgraph(courses))  # type: ignore
+        result = Catalog.close_graph(result)
+        if courses:
+            result = result.subgraph(courses)  # type: ignore
+        return Catalog.reduce_graph(result)
+
+    def blocking_factors(
+        self, courses: Optional[set[CourseId]] = None
+    ) -> dict[CourseId, int]:
+        graph = self.build_courses_graph(courses)
+        result: dict[CourseId, int] = {}
+        for course, block_factor in graph.out_degree():
+            result[course] = int(block_factor)
+        return result
+
+    def centrality_factors(
+        self, courses: Optional[set[CourseId]] = None
+    ) -> dict[CourseId, int]:
+        graph = self.build_courses_graph(courses)
+        result: dict[CourseId, int] = {}
+        for course, centrality_factor in graph.in_degree():
+            result[course] = int(centrality_factor)
+        return result
 
     @staticmethod
     def reduce_graph(graph: DiGraph) -> DiGraph:
