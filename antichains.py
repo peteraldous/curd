@@ -81,6 +81,8 @@ class Scheduler:
         self.term_count = term_count
         self.term_credit_max = term_credit_max
         self.max_credits = Const("max_credits", Z)
+        self.terms_past = terms_past
+        self.credits_past = 0
         courses = sorted(courses)
         self.total_required = sum(map(lambda p: p[1], courses))
 
@@ -111,6 +113,8 @@ class Scheduler:
     ) -> CourseData:
         term = Const(name + "_term", Z)
         credit_var = Const(name + "_credits", Z)
+        if term_infimum < self.terms_past:
+            self.credits_past += credits
         self.solver.add(term > term_infimum, term <= self.term_count)
         self.solver.add(
             credit_var == IntVal(credits),
@@ -141,7 +145,13 @@ class Scheduler:
 
         self.solver.add(self.max_credits <= IntVal(self.term_credit_max))
         self.solver.add(
-            self.max_credits >= IntVal(math.ceil(self.total_required / self.term_count))
+            self.max_credits
+            >= IntVal(
+                math.ceil(
+                    (self.total_required - self.credits_past)
+                    / (self.term_count - self.terms_past)
+                )
+            )
         )
 
         def prerequisite(before: ExprRef | str | int, after: ExprRef | str | int):
@@ -170,7 +180,9 @@ class Scheduler:
                 )
                 self.totals[index] = next_total
 
-        for total in self.totals:
+        for index, total in enumerate(self.totals):
+            if index < self.terms_past:
+                continue
             self.solver.add(total <= self.max_credits)
 
         return self.update()
