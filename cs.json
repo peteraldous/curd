@@ -5,15 +5,19 @@
             [
                 "ENGL",
                 "1010"
+            ],
+            [
+                "ENGH",
+                "1005"
             ]
         ],
-        "ENGL 2010": [
+        "intermediate English": [
             [
                 "ENGL",
                 "2010"
             ]
         ],
-        "MATH 1210": [
+        "calculus": [
             [
                 "MATH",
                 "1210"
@@ -413,7 +417,19 @@
                 "2420"
             ]
         ],
-        "CS 2450": [
+        "basic software engineering": [
+            [
+                "CS",
+                "2450"
+            ]
+        ],
+        "matriculation": [
+            [
+                "CS",
+                "2450"
+            ]
+        ],
+        "version control": [
             [
                 "CS",
                 "2450"
@@ -509,13 +525,13 @@
                 "3240"
             ]
         ],
-        "CS 3520": [
+        "databases": [
             [
                 "CS",
                 "3520"
             ]
         ],
-        "STAT 2050": [
+        "statistics": [
             [
                 "STAT",
                 "2050"
@@ -555,7 +571,7 @@
                 "3310"
             ]
         ],
-        "CS 3450": [
+        "software design patterns": [
             [
                 "CS",
                 "3450"
@@ -911,19 +927,25 @@
         [
             "ENGL",
             "1010",
-            "ENGL 1010",
+            "Introduction to Academic Writing",
+            3
+        ],
+        [
+            "ENGH",
+            "1005",
+            "Literacies and Composition Across Contexts",
             3
         ],
         [
             "ENGL",
             "2010",
-            "ENGL 2010",
+            "Intermediate Academic Writing",
             3
         ],
         [
             "MATH",
             "1210",
-            "MATH 1210",
+            "Calculus I",
             4
         ],
         [
@@ -1478,7 +1500,7 @@
         [
             "STAT",
             "2050",
-            "STAT 2050",
+            "Introduction to Statistical Methods",
             4
         ],
         [
@@ -1796,8 +1818,8 @@
     "programs": {
         "generals": [
             "freshman English",
-            "ENGL 2010",
-            "MATH 1210",
+            "intermediate English",
+            "calculus",
             "American institutions",
             "Ethics",
             "Health and wellness",
@@ -1827,7 +1849,9 @@
             "Algorithms (basic)",
             "Data structures",
             "Complexity theory",
-            "CS 2450",
+            "basic software engineering",
+            "matriculation",
+            "version control",
             "Web programming (basic)",
             "OSI Layer 1 (basic)",
             "OSI Layer 2 (basic)",
@@ -1849,11 +1873,11 @@
             "PDAs, context-free languages and grammars",
             "TMs, recursively enumerable languages and unrestricted grammars",
             "Rice's theorem",
-            "CS 3520",
-            "STAT 2050",
+            "databases",
+            "statistics",
             "3LSD",
             "CS 3310",
-            "CS 3450",
+            "software design patterns",
             "CS 4380",
             "CS 4450",
             "CS 4470",
@@ -1894,7 +1918,17 @@
         "Data structures": [
             "recursion"
         ],
-        "CS 2450": [
+        "matriculation": [
+            "Discrete math: algorithms",
+            "Algorithms (basic)",
+            "Data structures"
+        ],
+        "basic software engineering": [
+            "Discrete math: algorithms",
+            "Algorithms (basic)",
+            "Data structures"
+        ],
+        "version control": [
             "Discrete math: algorithms",
             "Algorithms (basic)",
             "Data structures"
@@ -1914,7 +1948,7 @@
         ],
         "ethics": [
             "Basic problem solving",
-            "ENGL 2010"
+            "intermediate English"
         ],
         "UNIX basics": [
             "Basic C++",
@@ -1923,31 +1957,31 @@
         ],
         "Operating system basics": [
             "Basic C++",
-            "CS 2450",
+            "matriculation",
             "Systems architecture (basic)"
         ],
         "OS scheduling": [
             "Data structures",
-            "CS 2450",
+            "matriculation",
             "Systems architecture (basic)",
             "Assembly (basic)"
         ],
         "File system basics": [
             "Basic C++",
             "Data structures",
-            "CS 2450",
+            "matriculation",
             "Systems architecture (basic)",
             "Assembly (basic)"
         ],
         "POSIX system calls": [
             "Basic C++",
             "Data structures",
-            "CS 2450",
+            "matriculation",
             "Systems architecture (basic)"
         ],
         "CS 3100": [
             "Algorithms (basic)",
-            "CS 2450"
+            "matriculation"
         ],
         "DFAs; regular languages, expressions, and grammars": [
             "Discrete math: sets",
@@ -1983,10 +2017,10 @@
             "TMs, recursively enumerable languages and unrestricted grammars"
         ],
         "CS 3310": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 3320": [
-            "MATH 1210"
+            "calculus"
         ],
         "Advanced C++": [
             "Basic C++",
@@ -1994,37 +2028,38 @@
             "Systems architecture (basic)"
         ],
         "3LSD": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 3410": [
-            "CS 2450"
+            "matriculation"
         ],
-        "CS 3450": [
-            "3LSD"
+        "software design patterns": [
+            "3LSD",
+            "OOP classes"
         ],
-        "CS 3520": [
-            "CS 2450"
+        "databases": [
+            "matriculation"
         ],
         "CS 3530": [
-            "CS 3520"
+            "databases"
         ],
         "Web Programming (advanced)": [
             "Data structures",
-            "CS 2450",
+            "matriculation",
             "Web programming (basic)"
         ],
         "CS 3720": [
-            "CS 3520"
+            "databases"
         ],
         "CS 4380": [
             "Assembly (basic)",
-            "CS 2450",
+            "matriculation",
             "Operating system basics",
             "File system basics",
             "POSIX system calls"
         ],
         "CS 4450": [
-            "CS 2450",
+            "matriculation",
             "Rice's theorem",
             "3LSD"
         ],
@@ -2032,15 +2067,15 @@
             "Data structures",
             "Complexity theory",
             "Algorithms (basic)",
-            "CS 2450",
+            "matriculation",
             "3LSD"
         ],
         "CS 4490": [
-            "CS 3450",
+            "software design patterns",
             "CS 4380",
             "CS 4450"
         ],
-        "ENGL 2010": [
+        "intermediate English": [
             "freshman English"
         ],
 
@@ -2067,17 +2102,17 @@
             "CS 3100"
         ],
         "CS 3540": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 3680": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 3720": [
-            "CS 3520"
+            "databases"
         ],
         "CS 3800": [
-            "CS 2450",
-            "STAT 2050"
+            "matriculation",
+            "statistics"
         ],
         "CS 3810": [
             "CS 3100",
@@ -2095,17 +2130,19 @@
             "CS 3140"
         ],
         "CS 4230": [
-            "CS 2450",
+            "matriculation",
+            "basic software engineering",
             "3LSD",
-            "STAT 2050"
+            "statistics"
         ],
         "CS 439R": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 4400": [
-            "CS 2450",
+            "matriculation",
+            "basic software engineering",
             "CS 2600",
-            "CS 3520",
+            "databases",
             "3LSD",
             "CS 3540"
         ],
@@ -2123,28 +2160,28 @@
             "CS 3320"
         ],
         "CS 4500": [
-            "CS 3520"
+            "databases"
         ],
         "CS 4550": [
             "CS 4400",
             "CS 4230"
         ],
         "CS 4610": [
-            "CS 2450",
+            "matriculation",
             "OSI Layer 3 (advanced)",
             "OSI Layer 4 (advanced)"
         ],
         "CS 4620": [
-            "CS 3520"
+            "databases"
         ],
         "CS 4660": [
-            "CS 2450",
-            "CS 3520"
+            "matriculation",
+            "databases"
         ],
         "CS 4670": [
             "Web Programming (advanced)",
             "CS 4610",
-            "CS 2450"
+            "matriculation"
         ],
         "CS 4690": [
             "Web Programming (advanced)"
@@ -2161,31 +2198,31 @@
             "Advanced C++"
         ],
         "CS 479R": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 4800": [
             "CS 3530"
         ],
         "CS 481R": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 4880": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 489R": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 4900": [
             "CS 3410",
             "CS 4660",
             "CS 4690",
-            "CS 2450"
+            "matriculation"
         ],
         "CS 491R": [
-            "CS 2450"
+            "matriculation"
         ],
         "CS 496R": [
-            "CS 2450"
+            "matriculation"
         ],
         "OSI Layer 1 (basic)": [
             "Systems architecture (basic)"
@@ -2224,8 +2261,8 @@
 
     "requirements": [
         "freshman English",
-        "ENGL 2010",
-        "MATH 1210",
+        "intermediate English",
+        "calculus",
         "American institutions",
         "Ethics",
         "Health and wellness",
@@ -2256,7 +2293,9 @@
         "Algorithms (basic)",
         "Data structures",
         "Complexity theory",
-        "CS 2450",
+        "basic software engineering",
+        "matriculation",
+        "version control",
         "Web programming (basic)",
         "CS 2600",
         "Assembly (basic)",
@@ -2272,12 +2311,12 @@
         "PDAs, context-free languages and grammars",
         "TMs, recursively enumerable languages and unrestricted grammars",
         "Rice's theorem",
-        "CS 3520",
-        "STAT 2050",
+        "databases",
+        "statistics",
         "3LSD",
         "Advanced C++",
         "CS 3310",
-        "CS 3450",
+        "software design patterns",
         "CS 4380",
         "CS 4450",
         "CS 4470",
