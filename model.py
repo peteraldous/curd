@@ -100,6 +100,7 @@ class Program:
 @dataclass(order=True, frozen=True)
 class Limits:
     "The limits on credits and terms for a Catalog"
+
     program_credit_limit: int = 120
     term_credit_limit: int = 18
     terms: int = 8
@@ -114,6 +115,7 @@ class CycleException(ValueError):
 @dataclass
 class Catalog:
     "A course catalog"
+
     requirements: set[Requirement]
     requirement_deps: Dict[Requirement, set[Requirement]]
     courses: Dict[CourseId, Course]
@@ -158,9 +160,7 @@ class Catalog:
                 result.add_edge(pre, post)
         return Catalog.reduce_graph(result)
 
-    def select_courses(
-        self, p_id: str | ProgramId
-    ) -> Tuple[set[CourseId], set[CourseId]]:
+    def select_courses(self, p_id: str | ProgramId) -> Tuple[set[CourseId], set[CourseId]]:
         """
         Select courses sufficient to match every requirement. When there are
         multiple options, choose randomly between them."""
@@ -242,18 +242,14 @@ class Catalog:
             result = result.subgraph(courses)  # type: ignore
         return Catalog.reduce_graph(result)
 
-    def blocking_factors(
-        self, courses: Optional[set[CourseId]] = None
-    ) -> dict[CourseId, int]:
+    def blocking_factors(self, courses: Optional[set[CourseId]] = None) -> dict[CourseId, int]:
         graph = self.build_courses_graph(courses)
         result: dict[CourseId, int] = {}
         for course, block_factor in graph.out_degree():
             result[course] = int(block_factor)
         return result
 
-    def centrality_factors(
-        self, courses: Optional[set[CourseId]] = None
-    ) -> dict[CourseId, int]:
+    def centrality_factors(self, courses: Optional[set[CourseId]] = None) -> dict[CourseId, int]:
         graph = self.build_courses_graph(courses)
         result: dict[CourseId, int] = {}
         for course, centrality_factor in graph.in_degree():
@@ -357,24 +353,21 @@ class Catalog:
         p_id = Catalog._get_program(name)
         self.programs[p_id] = Program(p_id, reqs)
 
-    def add_requirement_to_program(
-        self, name: str | ProgramId, requirement: str | Requirement
-    ):
+    def add_requirement_to_program(self, name: str | ProgramId, requirement: str | Requirement):
         """Add a requirement to the specified program. If no such requirement
         exists in the catalog, create it."""
         p_id = Catalog._get_program(name)
         req = Catalog._get_requirement(requirement)
         self.programs.setdefault(p_id, Program(p_id, set())).requirements.add(req)
 
-    def generate_schedule(self, p_id: str | ProgramId) -> antichains.Schedule:
+    def generate_schedule(self, p_id: str | ProgramId) -> pydot.Graph:
         """Choose classes that satisfy the program's requirements (using
         `Catalog.select_courses()`) and put them in a schedule with the
         appropriate number of terms."""
         required, electives = self.select_courses(p_id)
         courses = required | electives
         prereqs = [
-            (str(before_id), str(after_id))
-            for (before_id, after_id) in self.build_courses_graph(courses).edges()
+            (str(before_id), str(after_id)) for (before_id, after_id) in self.build_courses_graph(courses).edges()
         ]
 
         def course_value(c_id: CourseId) -> Tuple[str, int]:
@@ -396,9 +389,7 @@ class Catalog:
         schedule: antichains.Schedule,
         required: set[CourseId],
     ) -> pydot.Graph:
-        graph = pydot.Dot(
-            "schedule", graph_type="digraph", compound="true", rankdir="LR"
-        )
+        graph = pydot.Dot("schedule", graph_type="digraph", compound="true", rankdir="LR")
         nodes: dict[str, pydot.Node] = {}
         terms: dict[str, int] = {}
         last = None

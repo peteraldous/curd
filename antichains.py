@@ -8,6 +8,7 @@ import pydot
 import sys
 
 from z3 import (
+    ArithRef,
     BoolRef,
     Const,
     Datatype,
@@ -27,8 +28,8 @@ S = StringSort()
 
 @dataclass
 class CourseData:
-    term: Const
-    credits: Const
+    term: ArithRef
+    credits: ArithRef
 
 
 CourseType = Datatype("CourseType")
@@ -123,8 +124,8 @@ class Scheduler:
         )
         return CourseData(term, credit_var)
 
-    def to_const(self, datum: ExprRef | str | int) -> ExprRef:
-        if isinstance(datum, ExprRef):
+    def to_const(self, datum: ArithRef | str | int) -> ArithRef:
+        if isinstance(datum, ArithRef):
             return datum
         elif isinstance(datum, str):
             course = self.course_lookup.get(datum)
@@ -149,13 +150,13 @@ class Scheduler:
             >= IntVal(math.ceil((self.total_required - self.credits_past) / (self.term_count - self.terms_past)))
         )
 
-        def prerequisite(before: ExprRef | str | int, after: ExprRef | str | int):
+        def prerequisite(before: ArithRef | str | int, after: ArithRef | str | int):
             self.add_constraint(before, Op.LT, after)
 
         for before, after in self.prereqs:
             prerequisite(before, after)
 
-        self.totals: list[ExprRef] = [self.make_term_total_variable(index + 1) for index in range(self.term_count)]
+        self.totals: list[ArithRef] = [self.make_term_total_variable(index + 1) for index in range(self.term_count)]
         for total in self.totals:
             self.solver.add(total == IntVal(0))
         for course, data in self.course_lookup.items():
@@ -174,7 +175,7 @@ class Scheduler:
 
         return self.update()
 
-    def make_constraint(self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int) -> BoolRef:
+    def make_constraint(self, l_course: ArithRef | str | int, op: Op, r_course: ArithRef | str | int) -> BoolRef:
         l_const = self.to_const(l_course)
         r_const = self.to_const(r_course)
         # if l_const is None or r_const is None:
@@ -197,10 +198,10 @@ class Scheduler:
             case _:
                 raise ValueError("%s is not an Op!" % (op,))
 
-    def add_constraint(self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int):
+    def add_constraint(self, l_course: ArithRef | str | int, op: Op, r_course: ArithRef | str | int):
         self.solver.add(self.make_constraint(l_course, op, r_course))
 
-    def add_constraints(self, triples: Iterable[Tuple[ExprRef | str | int, Op, ExprRef | str | int]]):
+    def add_constraints(self, triples: Iterable[Tuple[ArithRef | str | int, Op, ArithRef | str | int]]):
         self.solver.add(Or(*map(lambda t: self.make_constraint(*t), triples)))
 
     def update(self) -> Schedule:
