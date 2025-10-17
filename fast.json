@@ -1,0 +1,2432 @@
+{
+    "__Catalog__": true,
+    "course_reqs": {
+        "freshman English": [
+            [
+                "ENGL",
+                "1010"
+            ],
+            [
+                "ENGH",
+                "1005"
+            ]
+        ],
+        "intermediate English": [
+            [
+                "ENGL",
+                "2010"
+            ]
+        ],
+        "calculus": [
+            [
+                "MATH",
+                "1210"
+            ]
+        ],
+        "American institutions": [
+            [
+                "HIST",
+                "1700"
+            ],
+            [
+                "HIST",
+                "1740"
+            ],
+            [
+                "POLS",
+                "1000"
+            ],
+            [
+                "POLS",
+                "1100"
+            ]
+        ],
+        "Ethics": [
+            [
+                "PHIL",
+                "2050"
+            ]
+        ],
+        "Health and wellness": [
+            [
+                "HLTH",
+                "1100"
+            ],
+            [
+                "EXSC",
+                "1097"
+            ]
+        ],
+        "COMM 1020": [
+            [
+                "COMM",
+                "1020"
+            ]
+        ],
+        "COMM 2110": [
+            [
+                "COMM",
+                "2110"
+            ]
+        ],
+        "Fine arts distribution": [
+            [
+                "MUSC",
+                "1010"
+            ],
+            [
+                "MUSC",
+                "102G"
+            ],
+            [
+                "MUSC",
+                "1030"
+            ],
+            [
+                "MUSC",
+                "1100"
+            ],
+            [
+                "MUSC",
+                "2100"
+            ],
+            [
+                "THEA",
+                "1013"
+            ],
+            [
+                "THEA",
+                "1023"
+            ],
+            [
+                "THEA",
+                "1033"
+            ],
+            [
+                "THEA",
+                "2100"
+            ],
+            [
+                "THEA",
+                "2311"
+            ]
+        ],
+        "Biology distribution": [
+            [
+                "BIOL",
+                "1010"
+            ],
+            [
+                "BIOL",
+                "1011"
+            ],
+            [
+                "BIOL",
+                "1070"
+            ],
+            [
+                "BIOL",
+                "1200"
+            ],
+            [
+                "BIOL",
+                "1500"
+            ],
+            [
+                "BIOL",
+                "204R"
+            ],
+            [
+                "BIOL",
+                "2500"
+            ],
+            [
+                "BOT",
+                "2050"
+            ],
+            [
+                "BOT",
+                "2100"
+            ],
+            [
+                "BTEC",
+                "1010"
+            ],
+            [
+                "NUTR",
+                "2020"
+            ],
+            [
+                "ZOOL",
+                "1090"
+            ],
+            [
+                "ZOOL",
+                "2320"
+            ]
+        ],
+        "Physical science distribution": [
+            [
+                "ASTR",
+                "1040"
+            ],
+            [
+                "ASTR",
+                "1070"
+            ],
+            [
+                "ASTR",
+                "1080"
+            ],
+            [
+                "CHEM",
+                "1010"
+            ],
+            [
+                "ENVT",
+                "1110"
+            ],
+            [
+                "GEO",
+                "1010"
+            ],
+            [
+                "GEO",
+                "1030"
+            ],
+            [
+                "GEO",
+                "1040"
+            ],
+            [
+                "GEO",
+                "1050"
+            ],
+            [
+                "GEO",
+                "1080"
+            ],
+            [
+                "GEO",
+                "204R"
+            ],
+            [
+                "GEOG",
+                "1000"
+            ],
+            [
+                "GEOG",
+                "1800"
+            ],
+            [
+                "METO",
+                "1010"
+            ],
+            [
+                "METO",
+                "1060"
+            ],
+            [
+                "PHSC",
+                "1000"
+            ],
+            [
+                "PHYS",
+                "1010"
+            ],
+            [
+                "PHYS",
+                "1700"
+            ],
+            [
+                "PHYS",
+                "1750"
+            ],
+            [
+                "PHYS",
+                "1800"
+            ],
+            [
+                "PHYS",
+                "1850"
+            ],
+            [
+                "TECH",
+                "1010"
+            ]
+        ],
+        "Science and lab": [
+            [
+                "BIOL",
+                "1610/1615"
+            ],
+            [
+                "CHEM",
+                "1210/1215"
+            ],
+            [
+                "PHYS",
+                "2020/2025"
+            ],
+            [
+                "PHYS",
+                "2210/2215"
+            ],
+            [
+                "PHYS",
+                "2220/2225"
+            ],
+            [
+                "GEOL",
+                "1010/1015/202R"
+            ]
+        ],
+        "Python function syntax": [
+            [
+                "CS",
+                "1400"
+            ],
+            [
+                "CS",
+                "1420"
+            ]
+        ],
+        "Function basics": [
+            [
+                "CS",
+                "1400"
+            ],
+            [
+                "CS",
+                "1420"
+            ]
+        ],
+        "Basic problem solving": [
+            [
+                "CS",
+                "1400"
+            ],
+            [
+                "CS",
+                "1420"
+            ]
+        ],
+        "Basic data structures": [
+            [
+                "CS",
+                "1400"
+            ],
+            [
+                "CS",
+                "1420"
+            ]
+        ],
+        "Python arithmetic operations": [
+            [
+                "CS",
+                "1400"
+            ],
+            [
+                "CS",
+                "1420"
+            ]
+        ],
+        "OOP classes": [
+            [
+                "CS",
+                "1410"
+            ],
+            [
+                "CS",
+                "1420"
+            ]
+        ],
+        "recursion": [
+            [
+                "CS",
+                "1410"
+            ],
+            [
+                "CS",
+                "1420"
+            ]
+        ],
+        "Discrete math: sets": [
+            [
+                "CS",
+                "2300"
+            ]
+        ],
+        "Discrete math: functions": [
+            [
+                "CS",
+                "2300"
+            ]
+        ],
+        "Discrete math: formal logic": [
+            [
+                "CS",
+                "2300"
+            ]
+        ],
+        "Discrete math: algorithms": [
+            [
+                "CS",
+                "2300"
+            ]
+        ],
+        "Discrete math: induction": [
+            [
+                "CS",
+                "2300"
+            ]
+        ],
+        "Discrete math: graphs": [
+            [
+                "CS",
+                "2300"
+            ]
+        ],
+        "Discrete math: trees": [
+            [
+                "CS",
+                "2300"
+            ]
+        ],
+        "Basic C++": [
+            [
+                "CS",
+                "2370"
+            ]
+        ],
+        "Algorithms (basic)": [
+            [
+                "CS",
+                "2420"
+            ]
+        ],
+        "Data structures": [
+            [
+                "CS",
+                "2420"
+            ]
+        ],
+        "Complexity theory": [
+            [
+                "CS",
+                "2420"
+            ]
+        ],
+        "basic software engineering": [
+            [
+                "CS",
+                "2450"
+            ]
+        ],
+        "matriculation": [
+            [
+                "CS",
+                "2450"
+            ]
+        ],
+        "version control": [
+            [
+                "CS",
+                "2450"
+            ]
+        ],
+        "Web programming (basic)": [
+            [
+                "CS",
+                "2550"
+            ]
+        ],
+        "CS 2600": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "Assembly (basic)": [
+            [
+                "CS",
+                "2810"
+            ]
+        ],
+        "Systems architecture (basic)": [
+            [
+                "CS",
+                "2810"
+            ]
+        ],
+        "ethics": [
+            [
+                "CS",
+                "305G"
+            ]
+        ],
+                "UNIX basics": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "Operating system basics": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "OS scheduling": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "File system basics": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "POSIX system calls": [
+            [
+                "CS",
+                "3060"
+            ]
+        ],
+        "CS 3100": [
+            [
+                "CS",
+                "3100"
+            ]
+        ],
+        "DFAs; regular languages, expressions, and grammars": [
+            [
+                "CS",
+                "3240"
+            ]
+        ],
+        "PDAs, context-free languages and grammars": [
+            [
+                "CS",
+                "3240"
+            ]
+        ],
+        "TMs, recursively enumerable languages and unrestricted grammars": [
+            [
+                "CS",
+                "3240"
+            ]
+        ],
+        "Rice's theorem": [
+            [
+                "CS",
+                "3240"
+            ]
+        ],
+        "databases": [
+            [
+                "CS",
+                "3520"
+            ]
+        ],
+        "statistics": [
+            [
+                "STAT",
+                "2050"
+            ]
+        ],
+        "Advanced C++": [
+            [
+                "CS",
+                "3370"
+            ]
+        ],
+        "3LSD": [
+            [
+                "CS",
+                "3250"
+            ],
+            [
+                "CS",
+                "3270"
+            ],
+            [
+                "CS",
+                "3370"
+            ],
+            [
+                "CS",
+                "3380"
+            ],
+            [
+                "CS",
+                "339R"
+            ]
+        ],
+        "CS 3310": [
+            [
+                "CS",
+                "3310"
+            ]
+        ],
+        "software design patterns": [
+            [
+                "CS",
+                "3450"
+            ]
+        ],
+        "CS 4380": [
+            [
+                "CS",
+                "4380"
+            ]
+        ],
+        "CS 4450": [
+            [
+                "CS",
+                "4450"
+            ]
+        ],
+        "CS 4470": [
+            [
+                "CS",
+                "4470"
+            ]
+        ],
+        "CS 4490": [
+            [
+                "CS",
+                "4490"
+            ]
+        ],
+        "CS 3410": [
+            [
+                "CS",
+                "3410"
+            ]
+        ],
+        "CS 3320": [
+            [
+                "CS",
+                "3320"
+            ]
+        ],
+        "CS 3530": [
+            [
+                "CS",
+                "3530"
+            ]
+        ],
+        "Web Programming (advanced)": [
+            [
+                "CS",
+                "3660"
+            ]
+        ],
+        "CS 3720": [
+            [
+                "CS",
+                "3720"
+            ]
+        ],
+
+
+        "CS 2700": [
+            [
+                "CS",
+                "2700"
+            ]
+        ],
+        "CS 3110": [
+            [
+                "CS",
+                "3110"
+            ]
+        ],
+        "CS 3120": [
+            [
+                "CS",
+                "3120"
+            ]
+        ],
+        "CS 3140": [
+            [
+                "CS",
+                "3140"
+            ]
+        ],
+        "CS 3540": [
+            [
+                "CS",
+                "3540"
+            ]
+        ],
+        "CS 3680": [
+            [
+                "CS",
+                "3680"
+            ]
+        ],
+        "CS 3800": [
+            [
+                "CS",
+                "3800"
+            ]
+        ],
+        "CS 3810": [
+            [
+                "CS",
+                "3810"
+            ]
+        ],
+        "CS 3820": [
+            [
+                "CS",
+                "3820"
+            ]
+        ],
+        "CS 4120": [
+            [
+                "CS",
+                "4120"
+            ]
+        ],
+        "CS 4200": [
+            [
+                "CS",
+                "4200"
+            ]
+        ],
+        "CS 4230": [
+            [
+                "CS",
+                "4230"
+            ]
+        ],
+        "CS 439R": [
+            [
+                "CS",
+                "439R"
+            ]
+        ],
+        "CS 4400": [
+            [
+                "CS",
+                "4400"
+            ]
+        ],
+        "CS 4440": [
+            [
+                "CS",
+                "4440"
+            ]
+        ],
+        "CS 4480": [
+            [
+                "CS",
+                "4480"
+            ]
+        ],
+        "CS 4500": [
+            [
+                "CS",
+                "4500"
+            ]
+        ],
+        "CS 4550": [
+            [
+                "CS",
+                "4550"
+            ]
+        ],
+        "CS 4610": [
+            [
+                "CS",
+                "4610"
+            ]
+        ],
+        "CS 4620": [
+            [
+                "CS",
+                "4620"
+            ]
+        ],
+        "CS 4660": [
+            [
+                "CS",
+                "4660"
+            ]
+        ],
+        "CS 4670": [
+            [
+                "CS",
+                "4670"
+            ]
+        ],
+        "CS 4690": [
+            [
+                "CS",
+                "4690"
+            ]
+        ],
+        "CS 4700": [
+            [
+                "CS",
+                "4700"
+            ]
+        ],
+        "CS 4710": [
+            [
+                "CS",
+                "4710"
+            ]
+        ],
+        "CS 4770": [
+            [
+                "CS",
+                "4770"
+            ]
+        ],
+        "CS 479R": [
+            [
+                "CS",
+                "479R"
+            ]
+        ],
+        "CS 4800": [
+            [
+                "CS",
+                "4800"
+            ]
+        ],
+        "CS 481R": [
+            [
+                "CS",
+                "481R"
+            ]
+        ],
+        "CS 4880": [
+            [
+                "CS",
+                "4880"
+            ]
+        ],
+        "CS 489R": [
+            [
+                "CS",
+                "489R"
+            ]
+        ],
+        "CS 4900": [
+            [
+                "CS",
+                "4900"
+            ]
+        ],
+        "CS 491R": [
+            [
+                "CS",
+                "491R"
+            ]
+        ],
+        "CS 496R": [
+            [
+                "CS",
+                "496R"
+            ]
+        ],
+        "OSI Layer 1 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 2 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 3 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 4 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 5 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 6 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 7 (basic)": [
+            [
+                "CS",
+                "2600"
+            ]
+        ],
+        "OSI Layer 1 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 2 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 3 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 4 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 5 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 6 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ],
+        "OSI Layer 7 (advanced)": [
+            [
+                "CS",
+                "2690"
+            ]
+        ]
+    },
+
+    "courses": [
+        [
+            "ENGL",
+            "1010",
+            "Introduction to Academic Writing",
+            3
+        ],
+        [
+            "ENGH",
+            "1005",
+            "Literacies and Composition Across Contexts",
+            3
+        ],
+        [
+            "ENGL",
+            "2010",
+            "Intermediate Academic Writing",
+            3
+        ],
+        [
+            "MATH",
+            "1210",
+            "Calculus I",
+            4
+        ],
+        [
+            "HIST",
+            "1700",
+            "American Civilization",
+            3
+        ],
+        [
+            "HIST",
+            "1740",
+            "US Economic History",
+            3
+        ],
+        [
+            "POLS",
+            "1000",
+            "American Heritage",
+            3
+        ],
+        [
+            "POLS",
+            "1100",
+            "American National Government",
+            3
+        ],
+        [
+            "PHIL",
+            "2050",
+            "Ethics and Values",
+            3
+        ],
+        [
+            "HLTH",
+            "1100",
+            "Personal Health and Wellness",
+            2
+        ],
+        [
+            "EXSC",
+            "1097",
+            "Fitness for Life",
+            2
+        ],
+        [
+            "COMM",
+            "1020",
+            "Public Speaking",
+            3
+        ],
+        [
+            "COMM",
+            "2110",
+            "Interpersonal Communication",
+            3
+        ],
+        [
+            "BIOL",
+            "1010",
+            "General Biology",
+                3
+        ],
+        [
+            "BIOL",
+            "1011",
+            "Introduction to Bioinformatics",
+                3
+        ],
+        [
+            "BIOL",
+            "1070",
+            "Heredity",
+                3
+        ],
+        [
+            "BIOL",
+            "1200",
+            "Prehistoric Life",
+                3
+        ],
+        [
+            "BIOL",
+            "1500",
+            "Biological Anthropology",
+                3
+        ],
+        [
+            "BIOL",
+            "204R",
+            "Natural History Excursion",
+                3
+        ],
+        [
+            "BIOL",
+            "2500",
+            "Environmental Biology",
+                3
+        ],
+        [
+            "BOT",
+            "2050",
+            "Field Botany",
+                3
+        ],
+        [
+            "BOT",
+            "2100",
+            "Flora of Utah",
+                3
+        ],
+        [
+            "BTEC",
+            "1010",
+            "Fundamentals of Biotechnology I Career Survey",
+                3
+        ],
+        [
+            "NUTR",
+            "2020",
+            "Nutrition Through the Life Cycle",
+                3
+        ],
+        [
+            "ZOOL",
+            "1090",
+            "Introduction to Human Anatomy and Physiology",
+                3
+        ],
+        [
+            "ZOOL",
+            "2320",
+            "Human Anatomy",
+                3
+        ],
+
+        [
+            "ASTR",
+            "1040",
+            "Elementary Astronomy",
+            3
+        ],
+        [
+            "ASTR",
+            "1070",
+            "Cultural Astronomy in Our Lives",
+            3
+        ],
+        [
+            "ASTR",
+            "1080",
+            "Life in the Universe",
+            3
+        ],
+        [
+            "CHEM",
+            "1010",
+            "Introduction to Chemistry",
+            3
+        ],
+        [
+            "ENVT",
+            "1110",
+            "Introduction to Environmental Management",
+            3
+        ],
+        [
+            "GEO",
+            "1010",
+            "Introduction to Geology",
+            3
+        ],
+        [
+            "GEO",
+            "1030",
+            "Natural Disasters and the Environment",
+            3
+        ],
+        [
+            "GEO",
+            "1040",
+            "The Dinosaurian World",
+            3
+        ],
+        [
+            "GEO",
+            "1050",
+            "Geology of National Parks",
+            3
+        ],
+        [
+            "GEO",
+            "1080",
+            "Introduction to Oceanography",
+            3
+        ],
+        [
+            "GEO",
+            "204R",
+            "Natural History Excursion I",
+            3
+        ],
+        [
+            "GEOG",
+            "1000",
+            "Introduction to Physical Geography",
+            3
+        ],
+        [
+            "GEOG",
+            "1800",
+            "Mapping the World with Geospatial Technology",
+            3
+        ],
+        [
+            "METO",
+            "1010",
+            "Introduction to Meteorology",
+            3
+        ],
+        [
+            "METO",
+            "1060",
+            "Fundamentals of Weather Forecasting",
+            3
+        ],
+        [
+            "PHSC",
+            "1000",
+            "Survey of Physical Science",
+            3
+        ],
+        [
+            "PHYS",
+            "1010",
+            "Elementary Physics",
+            3
+        ],
+        [
+            "PHYS",
+            "1700",
+            "Descriptive Acoustics",
+            3
+        ],
+        [
+            "PHYS",
+            "1750",
+            "The Acoustics of Music",
+            3
+        ],
+        [
+            "PHYS",
+            "1800",
+            "Energy You and the Environment",
+            3
+        ],
+        [
+            "PHYS",
+            "1850",
+            "The Physics of Aviation",
+            3
+        ],
+        [
+            "TECH",
+            "1010",
+            "Understanding Technology I",
+            3
+        ],
+
+        [
+            "ART",
+            "1010",
+            "Introduction to Visual Arts",
+            3
+        ],
+        [
+            "ART",
+            "1020",
+            "Basic Drawing for Non-Majors",
+            3
+        ],
+        [
+            "ART",
+            "1050",
+            "Photography I",
+            3
+        ],
+        [
+            "ART",
+            "1340",
+            "Sculpture I",
+            3
+        ],
+        [
+            "ART",
+            "1350",
+            "Ceramics I",
+            3
+        ],
+        [
+            "ART",
+            "1650",
+            "Watercolor",
+            3
+        ],
+        [
+            "ART",
+            "2100",
+            "Teaching Art for Children",
+            3
+        ],
+        [
+            "ART",
+            "2815",
+            "Historical Architecture and Interior Design Historical Architecture and Interior Design FF",
+            3
+        ],
+        [
+            "ARTH",
+            "2710",
+            "Prehistoric Through Gothic Art History",
+            3
+        ],
+        [
+            "ARTH",
+            "2720",
+            "Renaissance Through Contemporary Art History",
+            3
+        ],
+        [
+            "CINE",
+            "2311",
+            "Film History I",
+            3
+        ],
+        [
+            "DANC",
+            "1010",
+            "Dance as an Art Form",
+            3
+        ],
+        [
+            "DANC",
+            "2100",
+            "Teaching Dance for Children",
+            3
+        ],
+        [
+            "DANC",
+            "2110",
+            "Orientation to Dance",
+            3
+        ],
+        [
+            "EGDT",
+            "1720",
+            "Architectural Rendering",
+            3
+        ],
+        [
+            "MUSC",
+            "1010",
+            "Introduction to Music",
+            3
+        ],
+        [
+            "MUSC",
+            "102G",
+            "Introduction to World Music GI",
+            3
+        ],
+        [
+            "MUSC",
+            "1030",
+            "American Popular Music",
+            3
+        ],
+        [
+            "MUSC",
+            "1100",
+            "Fundamentals of Music",
+            3
+        ],
+        [
+            "MUSC",
+            "2100",
+            "Teaching Music for Children",
+            3
+        ],
+        [
+            "THEA",
+            "1013",
+            "Introduction to Theatre WE",
+            3
+        ],
+        [
+            "THEA",
+            "1023",
+            "Introduction to Film",
+            3
+        ],
+        [
+            "THEA",
+            "1033",
+            "Acting I",
+            3
+        ],
+        [
+            "THEA",
+            "2100",
+            "Teaching Theatre For Children",
+            3
+        ],
+        [
+            "THEA",
+            "2311",
+            "Film History I",
+            3
+        ],
+
+        [
+            "BIOL",
+            "1610/1615",
+            "College Biology I and lab",
+            5
+        ],
+        [
+            "CHEM",
+            "1210/1215",
+            "Principles of Chemistry I and lab",
+            5
+        ],
+        [
+            "PHYS",
+            "2020/2025",
+            "College Physics II and lab",
+            5
+        ],
+        [
+            "PHYS",
+            "2210/2215",
+            "Physics for Scientists and Engineers I and lab",
+            5
+        ],
+        [
+            "PHYS",
+            "2220/2225",
+            "Physics for Scientists and Engineers II and lab",
+            5
+        ],
+        [
+            "GEOL",
+            "1010/1015/202R",
+            "Introduction to Geology and lab and excursion",
+            5
+        ],
+        [
+            "CS",
+            "1030",
+            "Foundations of Computer Science",
+            3
+        ],
+        [
+            "CS",
+            "1400",
+            "Fundamentals of Programming",
+            3
+        ],
+        [
+            "CS",
+            "1410",
+            "Object-Oriented Programming",
+            3
+        ],
+        [
+            "CS",
+            "1420",
+            "Accelerated Introduction to Programming",
+            3
+        ],
+        [
+            "CS",
+            "2300",
+            "Discrete Math I",
+            3
+        ],
+        [
+            "CS",
+            "2370",
+            "C++ Programming",
+            3
+        ],
+        [
+            "CS",
+            "2420",
+            "Introduction to Algorithms and Data Structures",
+            3
+        ],
+        [
+            "CS",
+            "2450",
+            "Software Engineering I",
+            3
+        ],
+        [
+            "CS",
+            "2550",
+            "Web Programming I",
+            3
+        ],
+        [
+            "CS",
+            "2600",
+            "Computer Networks I",
+            3
+        ],
+        [
+            "CS",
+            "2810",
+            "Computer Organization and Architecture",
+            3
+        ],
+        [
+            "CS",
+            "305G",
+            "Global Social and Ethical Issues in Computing",
+            3
+        ],
+        [
+            "CS",
+            "3060",
+            "Operating Systems Theory",
+            3
+        ],
+        [
+            "CS",
+            "3100",
+            "Data Privacy and Security",
+            3
+        ],
+        [
+            "CS",
+            "3240",
+            "Discrete Math II",
+            3
+        ],
+        [
+            "CS",
+            "3520",
+            "Database Theory",
+            3
+        ],
+        [
+            "STAT",
+            "2050",
+            "Introduction to Statistical Methods",
+            4
+        ],
+        [
+            "CS",
+            "3250",
+            "Java Software development",
+            3
+        ],
+        [
+            "CS",
+            "3270",
+            "Python Software development",
+            3
+        ],
+        [
+            "CS",
+            "3370",
+            "C++ Software development",
+            3
+        ],
+        [
+            "CS",
+            "3380",
+            "JavaScript Software development",
+            3
+        ],
+        [
+            "CS",
+            "339R",
+            "Advanced Programming Language Other",
+            3
+        ],
+        [
+            "CS",
+            "3310",
+            "Analysis of Algorithms",
+            3
+        ],
+        [
+            "CS",
+            "3450",
+            "Principles and Patterns of Software Design",
+            3
+        ],
+        [
+            "CS",
+            "4380",
+            "Advanced High-Performance Computer Architecture",
+            3
+        ],
+        [
+            "CS",
+            "4450",
+            "Analysis of Programming Languages",
+            3
+        ],
+        [
+            "CS",
+            "4470",
+            "Artificial Intelligence",
+            3
+        ],
+        [
+            "CS",
+            "4490",
+            "Compiler Construction",
+            3
+        ],
+        [
+            "CS",
+            "3410",
+            "Human Factors in Software Development",
+            3
+        ],
+        [
+            "CS",
+            "3320",
+            "Numerical Software Development",
+            3
+        ],
+        [
+            "CS",
+            "3530",
+            "Data Management for Data Sciences",
+            3
+        ],
+        [
+            "CS",
+            "3660",
+            "Web Programming II",
+            3
+        ],
+        [
+            "CS",
+            "3720",
+            "Database Programming",
+            3
+        ],
+
+        [
+            "CS",
+            "2700",
+            "Causal Inference",
+            3
+        ],
+        [
+            "CS",
+            "3110",
+            "Applied Cryptography",
+            3
+        ],
+        [
+            "CS",
+            "3120",
+            "Ethical Hacking Tools Development",
+            3
+        ],
+        [
+            "CS",
+            "3140",
+            "Network and Cloud Security",
+            3
+        ],
+        [
+            "CS",
+            "3540",
+            "Game Programming",
+            3
+        ],
+        [
+            "CS",
+            "3680",
+            "Mobile Device Programming",
+            3
+        ],
+        [
+            "CS",
+            "3800",
+            "Data Science through Statistical Reasoning",
+            3
+        ],
+        [
+            "CS",
+            "3810",
+            "Applied Data Science",
+            3
+        ],
+        [
+            "CS",
+            "3820",
+            "Visualization Analytics for Data Science",
+            3
+        ],
+        [
+            "CS",
+            "4120",
+            "Security Vulnerability Analysis",
+            3
+        ],
+        [
+            "CS",
+            "4200",
+            "Secure Computing Capstone",
+            3
+        ],
+        [
+            "CS",
+            "4230",
+            "Software Testing and Quality Engineering",
+            3
+        ],
+        [
+            "CS",
+            "439R",
+            "Advanced Current Topics in Computer Science",
+            3
+        ],
+        [
+            "CS",
+            "4400",
+            "Software Engineering II",
+            3
+        ],
+        [
+            "CS",
+            "4440",
+            "Applied 3D Computer Graphics",
+            3
+        ],
+        [
+            "CS",
+            "4480",
+            "Digital Image Processing and Computer Vision",
+            3
+        ],
+        [
+            "CS",
+            "4500",
+            "Advanced Topics in Database",
+            3
+        ],
+        [
+            "CS",
+            "4550",
+            "Software Engineering III",
+            3
+        ],
+        [
+            "CS",
+            "4610",
+            "TCP IP Internet Architecture",
+            3
+        ],
+        [
+            "CS",
+            "4620",
+            "Data Mining",
+            3
+        ],
+        [
+            "CS",
+            "4660",
+            "NoSQL Database Development",
+            3
+        ],
+        [
+            "CS",
+            "4670",
+            "Undergraduate Research Project for Networking Specialization",
+            3
+        ],
+        [
+            "CS",
+            "4690",
+            "Distributed Internet Application Development",
+            3
+        ],
+        [
+            "CS",
+            "4700",
+            "Machine Learning I",
+            3
+        ],
+        [
+            "CS",
+            "4710",
+            "Machine Learning II",
+            3
+        ],
+        [
+            "CS",
+            "4770",
+            "Software Development for Robotics",
+            3
+        ],
+        [
+            "CS",
+            "479R",
+            "Advanced Current Topics in Computer Science",
+            3
+        ],
+        [
+            "CS",
+            "4800",
+            "Data Science Capstone",
+            3
+        ],
+        [
+            "CS",
+            "481R",
+            "Internship",
+            3
+        ],
+        [
+            "CS",
+            "4880",
+            "Cloud Computing",
+            3
+        ],
+        [
+            "CS",
+            "489R",
+            "Undergraduate Research Project",
+            3
+        ],
+        [
+            "CS",
+            "4900",
+            "Full Stack Web Senior Capstone",
+            3
+        ],
+        [
+            "CS",
+            "491R",
+            "Independent Study",
+            3
+        ],
+        [
+            "CS",
+            "496R",
+            "Senior Seminar",
+            3
+        ],
+        [
+                "CS",
+                "2690",
+                "Computer Networks II",
+                3
+        ]
+
+    ],
+
+    "program_credit_limit": 120,
+
+    "programs": {
+        "generals": [
+            "freshman English",
+            "intermediate English",
+            "calculus",
+            "American institutions",
+            "Ethics",
+            "Health and wellness",
+            "COMM 1020",
+            "COMM 2110",
+            "Fine arts distribution",
+            "Biology distribution",
+            "Physical science distribution",
+            "Science and lab"
+        ],
+        "CS_BS": [
+            "Basic problem solving",
+            "Basic data structures",
+            "Python arithmetic operations",
+            "Python function syntax",
+            "Function basics",
+            "recursion",
+            "OOP classes",
+            "Discrete math: sets",
+            "Discrete math: functions",
+            "Discrete math: formal logic",
+            "Discrete math: algorithms",
+            "Discrete math: induction",
+            "Discrete math: graphs",
+            "Discrete math: trees",
+            "Basic C++",
+            "Algorithms (basic)",
+            "Data structures",
+            "Complexity theory",
+            "basic software engineering",
+            "matriculation",
+            "version control",
+            "Web programming (basic)",
+            "OSI Layer 1 (basic)",
+            "OSI Layer 2 (basic)",
+            "OSI Layer 3 (basic)",
+            "OSI Layer 4 (basic)",
+            "OSI Layer 5 (basic)",
+            "OSI Layer 6 (basic)",
+            "OSI Layer 7 (basic)",
+            "Assembly (basic)",
+            "Systems architecture (basic)",
+            "ethics",
+            "UNIX basics",
+            "Operating system basics",
+            "OS scheduling",
+            "File system basics",
+            "POSIX system calls",
+            "CS 3100",
+            "DFAs; regular languages, expressions, and grammars",
+            "PDAs, context-free languages and grammars",
+            "TMs, recursively enumerable languages and unrestricted grammars",
+            "Rice's theorem",
+            "databases",
+            "statistics",
+            "3LSD",
+            "CS 3310",
+            "software design patterns",
+            "CS 4380",
+            "CS 4450",
+            "CS 4470",
+            "CS 4490"
+        ]
+    },
+
+    "req_deps": {
+        "recursion": [
+            "Basic problem solving",
+            "Python function syntax",
+            "Function basics"
+        ],
+        "OOP classes": [
+            "Basic problem solving",
+            "Basic data structures",
+            "Python arithmetic operations",
+            "Python function syntax",
+            "Function basics"
+        ],
+        "Discrete math: induction": [
+            "recursion"
+        ],
+        "Discrete math: graphs": [
+            "Discrete math: sets"
+        ],
+        "Discrete math: trees": [
+            "Discrete math: graphs"
+        ],
+        "Basic C++": [
+            "Basic problem solving",
+            "Basic data structures",
+            "Function basics"
+        ],
+        "Algorithms (basic)": [
+            "recursion"
+        ],
+        "Data structures": [
+            "recursion"
+        ],
+        "matriculation": [
+            "Discrete math: algorithms",
+            "Algorithms (basic)",
+            "Data structures"
+        ],
+        "basic software engineering": [
+            "Discrete math: algorithms",
+            "Algorithms (basic)",
+            "Data structures"
+        ],
+        "version control": [
+            "Discrete math: algorithms",
+            "Algorithms (basic)",
+            "Data structures"
+        ],
+        "Web programming (basic)": [
+            "OOP classes"
+        ],
+        "CS 2600": [
+            "Systems architecture (basic)"
+        ],
+        "Assembly (basic)": [
+            "Basic problem solving",
+            "Function basics"
+        ],
+        "Systems architecture (basic)": [
+            "Basic problem solving"
+        ],
+        "ethics": [
+            "Basic problem solving",
+            "intermediate English"
+        ],
+        "UNIX basics": [
+            "Basic C++",
+            "Systems architecture (basic)",
+            "Assembly (basic)"
+        ],
+        "Operating system basics": [
+            "Basic C++",
+            "matriculation",
+            "Systems architecture (basic)"
+        ],
+        "OS scheduling": [
+            "Data structures",
+            "matriculation",
+            "Systems architecture (basic)",
+            "Assembly (basic)"
+        ],
+        "File system basics": [
+            "Basic C++",
+            "Data structures",
+            "matriculation",
+            "Systems architecture (basic)",
+            "Assembly (basic)"
+        ],
+        "POSIX system calls": [
+            "Basic C++",
+            "Data structures",
+            "matriculation",
+            "Systems architecture (basic)"
+        ],
+        "CS 3100": [
+            "Algorithms (basic)",
+            "matriculation"
+        ],
+        "DFAs; regular languages, expressions, and grammars": [
+            "Discrete math: sets",
+            "Discrete math: functions",
+            "Discrete math: formal logic",
+            "Discrete math: algorithms",
+            "Discrete math: induction",
+            "Discrete math: graphs",
+            "Complexity theory"
+        ],
+        "PDAs, context-free languages and grammars": [
+            "DFAs; regular languages, expressions, and grammars",
+            "Discrete math: sets",
+            "Discrete math: functions",
+            "Discrete math: formal logic",
+            "Discrete math: algorithms",
+            "Discrete math: induction",
+            "Discrete math: graphs",
+            "Complexity theory"
+        ],
+        "TMs, recursively enumerable languages and unrestricted grammars": [
+            "DFAs; regular languages, expressions, and grammars",
+            "PDAs, context-free languages and grammars",
+            "Discrete math: sets",
+            "Discrete math: functions",
+            "Discrete math: formal logic",
+            "Discrete math: algorithms",
+            "Discrete math: induction",
+            "Discrete math: graphs",
+            "Complexity theory"
+        ],
+        "Rice's theorem": [
+            "TMs, recursively enumerable languages and unrestricted grammars"
+        ],
+        "CS 3310": [
+            "matriculation"
+        ],
+        "CS 3320": [
+            "calculus"
+        ],
+        "Advanced C++": [
+            "Basic C++",
+            "Assembly (basic)",
+            "Systems architecture (basic)"
+        ],
+        "3LSD": [
+            "matriculation"
+        ],
+        "CS 3410": [
+            "matriculation"
+        ],
+        "software design patterns": [
+            "3LSD",
+            "OOP classes"
+        ],
+        "databases": [
+            "matriculation"
+        ],
+        "CS 3530": [
+            "databases"
+        ],
+        "Web Programming (advanced)": [
+            "Data structures",
+            "matriculation",
+            "Web programming (basic)"
+        ],
+        "CS 3720": [
+            "databases"
+        ],
+        "CS 4380": [
+            "Assembly (basic)",
+            "matriculation",
+            "Operating system basics",
+            "File system basics",
+            "POSIX system calls"
+        ],
+        "CS 4450": [
+            "matriculation",
+            "Rice's theorem",
+            "3LSD"
+        ],
+        "CS 4470": [
+            "Data structures",
+            "Complexity theory",
+            "Algorithms (basic)",
+            "matriculation",
+            "3LSD"
+        ],
+        "CS 4490": [
+            "software design patterns",
+            "CS 4380",
+            "CS 4450"
+        ],
+        "intermediate English": [
+            "freshman English"
+        ],
+
+        "CS 2700": [
+            "Basic problem solving",
+            "Basic data structures"
+        ],
+        "CS 3110": [
+            "CS 3100",
+            "Discrete math: sets",
+            "Discrete math: formal logic",
+            "Discrete math: algorithms",
+            "Discrete math: induction"
+        ],
+        "CS 3120": [
+            "CS 3100"
+        ],
+        "CS 3140": [
+            "OSI Layer 3 (advanced)",
+            "OSI Layer 4 (advanced)",
+            "OSI Layer 5 (advanced)",
+            "OSI Layer 6 (advanced)",
+            "OSI Layer 7 (advanced)",
+            "CS 3100"
+        ],
+        "CS 3540": [
+            "matriculation"
+        ],
+        "CS 3680": [
+            "matriculation"
+        ],
+        "CS 3720": [
+            "databases"
+        ],
+        "CS 3800": [
+            "matriculation",
+            "statistics"
+        ],
+        "CS 3810": [
+            "CS 3100",
+            "CS 3530"
+        ],
+        "CS 3820": [
+            "CS 3530"
+        ],
+        "CS 4120": [
+            "CS 3100"
+        ],
+        "CS 4200": [
+            "CS 3110",
+            "CS 3120",
+            "CS 3140"
+        ],
+        "CS 4230": [
+            "matriculation",
+            "basic software engineering",
+            "3LSD",
+            "statistics"
+        ],
+        "CS 439R": [
+            "matriculation"
+        ],
+        "CS 4400": [
+            "matriculation",
+            "basic software engineering",
+            "CS 2600",
+            "databases",
+            "3LSD",
+            "CS 3540"
+        ],
+        "CS 4440": [
+            "Data structures",
+            "Algorithms (basic)",
+            "Complexity theory",
+            "3LSD"
+        ],
+        "CS 4480": [
+            "Discrete math: functions",
+            "Data structures",
+            "Algorithms (basic)",
+            "Complexity theory",
+            "CS 3320"
+        ],
+        "CS 4500": [
+            "databases"
+        ],
+        "CS 4550": [
+            "CS 4400",
+            "CS 4230"
+        ],
+        "CS 4610": [
+            "matriculation",
+            "OSI Layer 3 (advanced)",
+            "OSI Layer 4 (advanced)"
+        ],
+        "CS 4620": [
+            "databases"
+        ],
+        "CS 4660": [
+            "matriculation",
+            "databases"
+        ],
+        "CS 4670": [
+            "Web Programming (advanced)",
+            "CS 4610",
+            "matriculation"
+        ],
+        "CS 4690": [
+            "Web Programming (advanced)"
+        ],
+        "CS 4700": [
+            "Data structures",
+            "Algorithms (basic)",
+            "Complexity theory"
+        ],
+        "CS 4710": [
+            "CS 4700"
+        ],
+        "CS 4770": [
+            "Advanced C++"
+        ],
+        "CS 479R": [
+            "matriculation"
+        ],
+        "CS 4800": [
+            "CS 3530"
+        ],
+        "CS 481R": [
+            "matriculation"
+        ],
+        "CS 4880": [
+            "matriculation"
+        ],
+        "CS 489R": [
+            "matriculation"
+        ],
+        "CS 4900": [
+            "CS 3410",
+            "CS 4660",
+            "CS 4690",
+            "matriculation"
+        ],
+        "CS 491R": [
+            "matriculation"
+        ],
+        "CS 496R": [
+            "matriculation"
+        ],
+        "OSI Layer 1 (basic)": [
+            "Systems architecture (basic)"
+        ],
+        "OSI Layer 2 (basic)": [
+            "Systems architecture (basic)"
+        ],
+        "OSI Layer 3 (basic)": [
+            "Systems architecture (basic)"
+        ],
+        "OSI Layer 7 (basic)": [
+            "Web programming (basic)"
+        ],
+        "OSI Layer 1 (advanced)": [
+            "OSI Layer 1 (basic)"
+        ],
+        "OSI Layer 2 (advanced)": [
+            "OSI Layer 2 (basic)"
+        ],
+        "OSI Layer 3 (advanced)": [
+            "OSI Layer 3 (basic)"
+        ],
+        "OSI Layer 4 (advanced)": [
+            "OSI Layer 4 (basic)"
+        ],
+        "OSI Layer 5 (advanced)": [
+            "OSI Layer 5 (basic)"
+        ],
+        "OSI Layer 6 (advanced)": [
+            "OSI Layer 6 (basic)"
+        ],
+        "OSI Layer 7 (advanced)": [
+            "OSI Layer 7 (basic)"
+        ]
+    },
+
+    "requirements": [
+        "freshman English",
+        "intermediate English",
+        "calculus",
+        "American institutions",
+        "Ethics",
+        "Health and wellness",
+        "COMM 1020",
+        "COMM 2110",
+        "Fine arts distribution",
+        "Biology distribution",
+        "Physical science distribution",
+        "Science and lab",
+        "Basic problem solving",
+        "Basic data structures",
+        "Python arithmetic operations",
+        "Python function syntax",
+        "Function basics",
+        "OOP classes",
+        "recursion",
+        "Discrete math: sets",
+        "Discrete math: functions",
+        "Discrete math: formal logic",
+        "Discrete math: algorithms",
+        "Discrete math: induction",
+        "Discrete math: graphs",
+        "Discrete math: trees",
+        "Basic C++",
+        "Data structures",
+        "Algorithms (basic)",
+        "Complexity theory",
+        "Algorithms (basic)",
+        "Data structures",
+        "Complexity theory",
+        "basic software engineering",
+        "matriculation",
+        "version control",
+        "Web programming (basic)",
+        "CS 2600",
+        "Assembly (basic)",
+        "Systems architecture (basic)",
+        "ethics",
+        "UNIX basics",
+        "Operating system basics",
+        "OS scheduling",
+        "File system basics",
+        "POSIX system calls",
+        "CS 3100",
+        "DFAs; regular languages, expressions, and grammars",
+        "PDAs, context-free languages and grammars",
+        "TMs, recursively enumerable languages and unrestricted grammars",
+        "Rice's theorem",
+        "databases",
+        "statistics",
+        "3LSD",
+        "Advanced C++",
+        "CS 3310",
+        "software design patterns",
+        "CS 4380",
+        "CS 4450",
+        "CS 4470",
+        "CS 4490",
+
+        "CS 2700",
+        "CS 3110",
+        "CS 3120",
+        "CS 3140",
+        "CS 3250",
+        "CS 3270",
+        "CS 3320",
+        "CS 3380",
+        "CS 3530",
+        "CS 3540",
+        "Web Programming (advanced)",
+        "CS 3680",
+        "CS 3720",
+        "CS 3800",
+        "CS 3810",
+        "CS 3820",
+        "CS 4120",
+        "CS 4200",
+        "CS 4230",
+        "CS 439R",
+        "CS 4400",
+        "CS 4440",
+        "CS 4480",
+        "CS 4500",
+        "CS 4550",
+        "CS 4610",
+        "CS 4620",
+        "CS 4660",
+        "CS 4670",
+        "CS 4690",
+        "CS 4700",
+        "CS 4710",
+        "CS 4770",
+        "CS 479R",
+        "CS 4800",
+        "CS 481R",
+        "CS 4880",
+        "CS 489R",
+        "CS 4900",
+        "CS 491R",
+        "CS 496R"
+    ],
+
+    "selections": [
+        [
+            "CS",
+            "1420"
+        ]
+    ],
+
+    "constraints": [
+        [
+            [
+                [
+                    "CS",
+                    "4490"
+                ],
+                6,
+                [
+                    "CS",
+                    "4470"
+                ]
+            ]
+        ],
+        [
+            [
+                [
+                    "CS",
+                    "4490"
+                ],
+                5,
+                0
+            ]
+        ],
+        [
+            [
+                [
+                    "CS",
+                    "4380"
+                ],
+                5,
+                1
+            ],
+            [
+                [
+                    "CS",
+                    "4380"
+                ],
+                5,
+                3
+            ],
+            [
+                [
+                    "CS",
+                    "4380"
+                ],
+                5,
+                5
+            ]
+        ]
+    ],
+
+    "term_credit_limit": 21,
+
+    "term_limit": 6,
+
+    "terms_past": 0
+}

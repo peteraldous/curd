@@ -1,0 +1,52 @@
+{
+    "__Catalog__": true,
+    "constraints": [],
+    "course_reqs": {
+        "OOP": [
+            [
+                "CS",
+                "1410"
+            ]
+        ],
+        "basic programming": [
+            [
+                "CS",
+                "1400"
+            ]
+        ]
+    },
+    "courses": [
+        [
+            "CS",
+            "1400",
+            "Fundamentals of Programming",
+            3
+        ],
+        [
+            "CS",
+            "1410",
+            "Object-Oriented Programming",
+            3
+        ]
+    ],
+    "program_credit_limit": 6,
+    "programs": {
+        "CS_BS": [
+            "basic programming",
+            "OOP"
+        ]
+    },
+    "req_deps": {
+        "OOP": [
+            "basic programming"
+        ]
+    },
+    "requirements": [
+        "basic programming",
+        "OOP"
+    ],
+    "selections": [],
+    "term_credit_limit": 3,
+    "term_limit": 2,
+    "terms_past": 0
+}

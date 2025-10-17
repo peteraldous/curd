@@ -2,7 +2,9 @@
 
 import json
 import networkx
+import os
 
+from argparse import ArgumentParser
 from model import Catalog, Course, CourseId, Limits, Requirement, Program, ProgramId
 from serialize import CatalogEncoder, catalog_hook
 
@@ -38,15 +40,12 @@ def test_output():
         json_file.write("\n")
 
 
-def test_input():
+def test_input(filename):
     """Read a file and generate a graph from it"""
-    with open("cs.json", "r", encoding="utf-8") as json_file:
+    with open(filename, "r", encoding="utf-8") as json_file:
         catalog = json.load(json_file, object_hook=catalog_hook)
 
     required, electives = catalog.select_courses("CS_BS")
-    print(
-        f"{sum(map(lambda c: catalog.courses[c].creds, electives))} total elective credits"
-    )
     courses = required | electives
     graph = catalog.build_courses_graph(courses)
     networkx.nx_pydot.write_dot(graph, "concepts.dot")
@@ -64,7 +63,8 @@ def test_input():
 
     schedule = catalog.generate_schedule("CS_BS")
 
-    with open("plan.dot", "w", encoding="utf8") as plan:
+    dotfile = os.path.splitext(os.path.basename(filename))[0] + ".dot"
+    with open(dotfile, "w", encoding="utf8") as plan:
         print(schedule, file=plan)
 
 
@@ -81,9 +81,12 @@ def make_reqs(filename: str):
 
 def main():
     """Stubs for testing"""
+    parser = ArgumentParser()
+    parser.add_argument("-f", "--filename", type=str, default="cs.json")
+    args = parser.parse_args()
 
-    test_output()
-    test_input()
+    # test_output()
+    test_input(args.filename)
 
 
 if __name__ == "__main__":

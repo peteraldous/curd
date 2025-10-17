@@ -95,16 +95,14 @@ class Scheduler:
 
         past_courses: set[str] = set()
 
-        print(constraints)
+        # print(constraints)
         for disjunction in constraints:
             for lhs, op, rhs in disjunction:
                 if isinstance(rhs, int) and rhs <= terms_past:
                     past_courses.add(lhs)
 
         self.course_lookup = {
-            name: self.make_course_data(
-                name, credits, 0 if name in past_courses else terms_past
-            )
+            name: self.make_course_data(name, credits, 0 if name in past_courses else terms_past)
             for (name, credits) in sorted(courses)
         }
         self.counter = 0
@@ -112,9 +110,7 @@ class Scheduler:
         for disjunction in constraints:
             self.add_constraints(disjunction)
 
-    def make_course_data(
-        self, name: str, credits: int, term_infimum: int
-    ) -> CourseData:
+    def make_course_data(self, name: str, credits: int, term_infimum: int) -> CourseData:
         term = Const(name + "_term", Z)
         credit_var = Const(name + "_credits", Z)
         if term_infimum < self.terms_past:
@@ -150,12 +146,7 @@ class Scheduler:
         self.solver.add(self.max_credits <= IntVal(self.term_credit_max))
         self.solver.add(
             self.max_credits
-            >= IntVal(
-                math.ceil(
-                    (self.total_required - self.credits_past)
-                    / (self.term_count - self.terms_past)
-                )
-            )
+            >= IntVal(math.ceil((self.total_required - self.credits_past) / (self.term_count - self.terms_past)))
         )
 
         def prerequisite(before: ExprRef | str | int, after: ExprRef | str | int):
@@ -164,9 +155,7 @@ class Scheduler:
         for before, after in self.prereqs:
             prerequisite(before, after)
 
-        self.totals: list[ExprRef] = [
-            self.make_term_total_variable(index + 1) for index in range(self.term_count)
-        ]
+        self.totals: list[ExprRef] = [self.make_term_total_variable(index + 1) for index in range(self.term_count)]
         for total in self.totals:
             self.solver.add(total == IntVal(0))
         for course, data in self.course_lookup.items():
@@ -174,14 +163,8 @@ class Scheduler:
                 term = index + 1
                 next_total = self.make_term_total_variable(term)
                 term_val = IntVal(term)
-                self.solver.add(
-                    Implies(
-                        data.term == term_val, next_total == prev_total + data.credits
-                    )
-                )
-                self.solver.add(
-                    Implies(data.term != term_val, next_total == prev_total)
-                )
+                self.solver.add(Implies(data.term == term_val, next_total == prev_total + data.credits))
+                self.solver.add(Implies(data.term != term_val, next_total == prev_total))
                 self.totals[index] = next_total
 
         for index, total in enumerate(self.totals):
@@ -191,9 +174,7 @@ class Scheduler:
 
         return self.update()
 
-    def make_constraint(
-        self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int
-    ) -> BoolRef:
+    def make_constraint(self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int) -> BoolRef:
         l_const = self.to_const(l_course)
         r_const = self.to_const(r_course)
         # if l_const is None or r_const is None:
@@ -216,14 +197,10 @@ class Scheduler:
             case _:
                 raise ValueError("%s is not an Op!" % (op,))
 
-    def add_constraint(
-        self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int
-    ):
+    def add_constraint(self, l_course: ExprRef | str | int, op: Op, r_course: ExprRef | str | int):
         self.solver.add(self.make_constraint(l_course, op, r_course))
 
-    def add_constraints(
-        self, triples: Iterable[Tuple[ExprRef | str | int, Op, ExprRef | str | int]]
-    ):
+    def add_constraints(self, triples: Iterable[Tuple[ExprRef | str | int, Op, ExprRef | str | int]]):
         self.solver.add(Or(*map(lambda t: self.make_constraint(*t), triples)))
 
     def update(self) -> Schedule:
