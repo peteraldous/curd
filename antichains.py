@@ -1,7 +1,8 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional, Tuple
+import model
+from typing import Any, Optional, Tuple
 import math
 import os
 import pydot
@@ -56,7 +57,7 @@ class Constraint:
 
 @dataclass
 class Schedule:
-    schedule: list[Tuple[int, set[str]]]
+    schedule: list[Tuple[int, set[model.CourseId]]]
 
     def __str__(self):
         result = ""
@@ -71,11 +72,12 @@ class Schedule:
 class Scheduler:
     def __init__(
         self,
-        courses: Iterable[Tuple[str, int]],
-        prereqs: Iterable[Tuple[str, str]],
+        courses: Iterable[Tuple[model.CourseId, int]],
+        prereqs: Iterable[Tuple[model.CourseId, model.CourseId]],
         term_count: int,
         term_credit_max: int,
         terms_past: int,
+        required: set[Any],
         constraints: Optional[Iterable[Iterable[Tuple[str, Op, str | int]]]] = None,
     ):
         self.solver = Solver()
@@ -85,6 +87,7 @@ class Scheduler:
         self.term_credit_max = term_credit_max
         self.max_credits = Const("max_credits", Z)
         self.terms_past = terms_past
+        self.required = required
         self.credits_past = 0
         courses = sorted(courses)
         self.total_required = sum(map(lambda p: p[1], courses))
@@ -103,15 +106,16 @@ class Scheduler:
                     past_courses.add(lhs)
 
         self.course_lookup = {
-            name: self.make_course_data(name, credits, 0 if name in past_courses else terms_past)
-            for (name, credits) in sorted(courses)
+            course: self.make_course_data(course, credits, 0 if course in past_courses else terms_past)
+            for (course, credits) in sorted(courses)
         }
         self.counter = 0
 
         for disjunction in constraints:
             self.add_constraints(disjunction)
 
-    def make_course_data(self, name: str, credits: int, term_infimum: int) -> CourseData:
+    def make_course_data(self, course: model.CourseId, credits: int, term_infimum: int) -> CourseData:
+        name = str(course)
         term = Const(name + "_term", Z)
         credit_var = Const(name + "_credits", Z)
         if term_infimum < self.terms_past:
@@ -124,18 +128,19 @@ class Scheduler:
         )
         return CourseData(term, credit_var)
 
-    def to_const(self, datum: ArithRef | str | int) -> ArithRef:
+    def to_const(self, datum: ArithRef | str | int | model.CourseId) -> ArithRef:
         if isinstance(datum, ArithRef):
             return datum
-        elif isinstance(datum, str):
-            course = self.course_lookup.get(datum)
-            if course:
-                return course.term
-            raise ValueError("No such course: %s" % datum)
-        else:
+        elif isinstance(datum, int):
             if datum < 1:
                 datum += self.term_count
             return IntVal(datum)
+        elif isinstance(datum, str):
+            datum = model.CourseId.from_str(datum)
+        course = self.course_lookup.get(datum)
+        if course:
+            return course.term
+        raise ValueError("No such course: %s" % datum)
 
     def make_term_total_variable(self, term: int):
         old_counter = self.counter
@@ -150,7 +155,7 @@ class Scheduler:
             >= IntVal(math.ceil((self.total_required - self.credits_past) / (self.term_count - self.terms_past)))
         )
 
-        def prerequisite(before: ArithRef | str | int, after: ArithRef | str | int):
+        def prerequisite(before: ArithRef | str | int | model.CourseId, after: ArithRef | str | int | model.CourseId):
             self.add_constraint(before, Op.LT, after)
 
         for before, after in self.prereqs:
@@ -175,7 +180,9 @@ class Scheduler:
 
         return self.update()
 
-    def make_constraint(self, l_course: ArithRef | str | int, op: Op, r_course: ArithRef | str | int) -> BoolRef:
+    def make_constraint(
+        self, l_course: ArithRef | str | int | model.CourseId, op: Op, r_course: ArithRef | str | int | model.CourseId
+    ) -> BoolRef:
         l_const = self.to_const(l_course)
         r_const = self.to_const(r_course)
         # if l_const is None or r_const is None:
@@ -198,7 +205,9 @@ class Scheduler:
             case _:
                 raise ValueError("%s is not an Op!" % (op,))
 
-    def add_constraint(self, l_course: ArithRef | str | int, op: Op, r_course: ArithRef | str | int):
+    def add_constraint(
+        self, l_course: ArithRef | str | int | model.CourseId, op: Op, r_course: ArithRef | str | int | model.CourseId
+    ):
         self.solver.add(self.make_constraint(l_course, op, r_course))
 
     def add_constraints(self, triples: Iterable[Tuple[ArithRef | str | int, Op, ArithRef | str | int]]):
@@ -206,7 +215,7 @@ class Scheduler:
 
     def update(self) -> Schedule:
         self.solver.check()
-        model = self.solver.model()
+        solver_model = self.solver.model()
         term_credit_max = self.term_credit_max
 
         attempt_solver = self.solver.__copy__()
@@ -217,18 +226,18 @@ class Scheduler:
             attempt_solver.add(self.max_credits <= IntVal(term_credit_max))
             try:
                 attempt_solver.check()
-                model = attempt_solver.model()
+                solver_model = attempt_solver.model()
             except z3types.Z3Exception:
                 # when the solver fails, continue with the last functional model
                 break
 
-        schedule: list[Tuple[int, set[str]]] = []
-        terms: list[set[str]] = [set() for _ in range(self.term_count)]
-        for name, c in self.course_lookup.items():
-            terms[model[c.term].as_long() - 1].add(name)
+        schedule: list[Tuple[int, set[model.CourseId]]] = []
+        terms: list[set[model.CourseId]] = [set() for _ in range(self.term_count)]
+        for course, c in self.course_lookup.items():
+            terms[solver_model[c.term].as_long() - 1].add(course)
 
         for index, classes in enumerate(terms):
-            total = model[self.totals[index]]
+            total = solver_model[self.totals[index]]
             schedule.append((total, classes))
 
         self.schedule = Schedule(schedule)
@@ -237,100 +246,106 @@ class Scheduler:
 
 
 if __name__ == "__main__":
-    courses = [
-        # general education
-        ("engl_1010", 3),
-        ("engl_2010", 3),
-        ("math_1210", 4),
-        ("hist_1700", 3),
-        ("phil_2050", 3),
-        ("hlth_1100", 2),
-        ("comm_1020", 3),
-        ("comm_2110", 3),
-        ("fa_dist", 3),
-        ("bio_dist", 3),
-        ("phys_dist", 3),
-        ("biol_1610", 4),
-        ("biol_1615", 1),
-        # core
-        ("cs_1400", 3),
-        ("cs_1410", 3),
-        ("cs_2300", 3),
-        ("cs_2370", 3),
-        ("cs_2420", 3),
-        ("cs_2450", 3),
-        ("cs_2550", 3),
-        ("cs_2600", 3),
-        ("cs_2810", 3),
-        ("cs_305g", 3),
-        ("cs_3060", 3),
-        ("cs_3100", 3),
-        ("cs_3240", 3),
-        ("cs_3520", 3),
-        ("stat_2050", 4),
-        # emphasis
-        ("cs_3370", 3),
-        ("cs_3310", 3),
-        ("cs_3450", 3),
-        ("cs_4380", 3),
-        ("cs_4450", 3),
-        ("cs_4470", 3),
-        ("cs_4490", 3),
-        # electives
-        ("cs_3410", 3),
-        ("cs_3320", 3),
-        ("cs_3530", 3),
-        ("cs_3660", 3),
-        ("cs_3720", 3),
-    ]
+    courses = map(
+        lambda p: (model.CourseId.from_str(p[0]), p[1]),
+        [
+            # general education
+            ("engl_1010", 3),
+            ("engl_2010", 3),
+            ("math_1210", 4),
+            ("hist_1700", 3),
+            ("phil_2050", 3),
+            ("hlth_1100", 2),
+            ("comm_1020", 3),
+            ("comm_2110", 3),
+            ("fa_dist", 3),
+            ("bio_dist", 3),
+            ("phys_dist", 3),
+            ("biol_1610", 4),
+            ("biol_1615", 1),
+            # core
+            ("cs_1400", 3),
+            ("cs_1410", 3),
+            ("cs_2300", 3),
+            ("cs_2370", 3),
+            ("cs_2420", 3),
+            ("cs_2450", 3),
+            ("cs_2550", 3),
+            ("cs_2600", 3),
+            ("cs_2810", 3),
+            ("cs_305g", 3),
+            ("cs_3060", 3),
+            ("cs_3100", 3),
+            ("cs_3240", 3),
+            ("cs_3520", 3),
+            ("stat_2050", 4),
+            # emphasis
+            ("cs_3370", 3),
+            ("cs_3310", 3),
+            ("cs_3450", 3),
+            ("cs_4380", 3),
+            ("cs_4450", 3),
+            ("cs_4470", 3),
+            ("cs_4490", 3),
+            # electives
+            ("cs_3410", 3),
+            ("cs_3320", 3),
+            ("cs_3530", 3),
+            ("cs_3660", 3),
+            ("cs_3720", 3),
+        ],
+    )
 
-    prereqs = [
-        ("engl_1010", "engl_2010"),
-        ("cs_1400", "cs_1410"),
-        ("cs_1410", "cs_2300"),
-        ("cs_1410", "cs_2370"),
-        ("cs_1410", "cs_2420"),
-        ("cs_2300", "cs_2450"),
-        ("cs_2420", "cs_2450"),
-        ("cs_1410", "cs_2550"),
-        ("cs_2810", "cs_2600"),
-        ("cs_1400", "cs_2810"),
-        ("cs_1400", "cs_305g"),
-        ("engl_2010", "cs_305g"),
-        ("cs_2370", "cs_3060"),
-        ("cs_2420", "cs_3060"),
-        ("cs_2450", "cs_3060"),
-        ("cs_2810", "cs_3060"),
-        ("cs_2420", "cs_3100"),
-        ("cs_2450", "cs_3100"),
-        ("cs_2300", "cs_3240"),
-        ("cs_2420", "cs_3240"),
-        ("cs_2810", "cs_3240"),
-        ("cs_2450", "cs_3310"),
-        ("math_1210", "cs_3320"),
-        ("cs_2370", "cs_3370"),
-        ("cs_2450", "cs_3370"),
-        ("cs_2810", "cs_3370"),
-        ("cs_2450", "cs_3410"),
-        ("cs_3370", "cs_3450"),
-        ("cs_2450", "cs_3520"),
-        ("cs_3520", "cs_3530"),
-        ("cs_2420", "cs_3660"),
-        ("cs_2450", "cs_3660"),
-        ("cs_2550", "cs_3660"),
-        ("cs_3520", "cs_3720"),
-        ("cs_2450", "cs_4380"),
-        ("cs_3060", "cs_4380"),
-        ("cs_2450", "cs_4450"),
-        ("cs_3240", "cs_4450"),
-        ("cs_3370", "cs_4450"),
-        ("cs_2420", "cs_4470"),
-        ("cs_2450", "cs_4470"),
-        ("cs_3370", "cs_4470"),
-        ("cs_3450", "cs_4490"),
-        ("cs_4380", "cs_4490"),
-        ("cs_4450", "cs_4490"),
-    ]
+    prereqs = map(
+        lambda p: (model.CourseId.from_str(p[0]), model.CourseId.from_str(p[1])),
+        [
+            ("engl_1010", "engl_2010"),
+            ("cs_1400", "cs_1410"),
+            ("cs_1410", "cs_2300"),
+            ("cs_1410", "cs_2370"),
+            ("cs_1410", "cs_2420"),
+            ("cs_2300", "cs_2450"),
+            ("cs_2420", "cs_2450"),
+            ("cs_1410", "cs_2550"),
+            ("cs_2810", "cs_2600"),
+            ("cs_1400", "cs_2810"),
+            ("cs_1400", "cs_305g"),
+            ("engl_2010", "cs_305g"),
+            ("cs_2370", "cs_3060"),
+            ("cs_2420", "cs_3060"),
+            ("cs_2450", "cs_3060"),
+            ("cs_2810", "cs_3060"),
+            ("cs_2420", "cs_3100"),
+            ("cs_2450", "cs_3100"),
+            ("cs_2300", "cs_3240"),
+            ("cs_2420", "cs_3240"),
+            ("cs_2810", "cs_3240"),
+            ("cs_2450", "cs_3310"),
+            ("math_1210", "cs_3320"),
+            ("cs_2370", "cs_3370"),
+            ("cs_2450", "cs_3370"),
+            ("cs_2810", "cs_3370"),
+            ("cs_2450", "cs_3410"),
+            ("cs_3370", "cs_3450"),
+            ("cs_2450", "cs_3520"),
+            ("cs_3520", "cs_3530"),
+            ("cs_2420", "cs_3660"),
+            ("cs_2450", "cs_3660"),
+            ("cs_2550", "cs_3660"),
+            ("cs_3520", "cs_3720"),
+            ("cs_2450", "cs_4380"),
+            ("cs_3060", "cs_4380"),
+            ("cs_2450", "cs_4450"),
+            ("cs_3240", "cs_4450"),
+            ("cs_3370", "cs_4450"),
+            ("cs_2420", "cs_4470"),
+            ("cs_2450", "cs_4470"),
+            ("cs_3370", "cs_4470"),
+            ("cs_3450", "cs_4490"),
+            ("cs_4380", "cs_4490"),
+            ("cs_4450", "cs_4490"),
+        ],
+    )
 
     scheduler = Scheduler(
         courses,
@@ -338,6 +353,7 @@ if __name__ == "__main__":
         8,
         18,
         0,
+        set(),
         [
             [("cs_4470", Op.NE, "cs_4490")],
             [("biol_1610", Op.EQ, "biol_1615")],

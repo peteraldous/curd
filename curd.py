@@ -3,10 +3,15 @@
 import json
 import networkx
 import os
+import sys
+
+from gui import TermsView
 
 from argparse import ArgumentParser
 from model import Catalog, Course, CourseId, Limits, Requirement, Program, ProgramId
+from PyQt6.QtWidgets import QApplication
 from serialize import CatalogEncoder, catalog_hook
+from typing import Optional
 
 
 def test_output():
@@ -40,12 +45,20 @@ def test_output():
         json_file.write("\n")
 
 
-def test_input(filename):
-    """Read a file and generate a graph from it"""
+def read_catalog(filename):
+    """Read a catalog from `filename` and return it as a `Catalog` object."""
     with open(filename, "r", encoding="utf-8") as json_file:
-        catalog = json.load(json_file, object_hook=catalog_hook)
+        return json.load(json_file, object_hook=catalog_hook)
 
-    required, electives = catalog.select_courses("CS_BS")
+
+def test_input(filename: str, program: Optional[str]):
+    """Read a file and generate a graph from it"""
+    catalog = read_catalog(filename)
+
+    if program is None:
+        program = "CS_BS"
+
+    required, electives = catalog.select_courses(program)
     courses = required | electives
     graph = catalog.build_courses_graph(courses)
     networkx.nx_pydot.write_dot(graph, "concepts.dot")
@@ -61,11 +74,18 @@ def test_input(filename):
         for post, pre in Catalog.close_graph(graph).edges:
             print(f"{pre}\t{post}", file=order)
 
-    schedule = catalog.generate_schedule("CS_BS")
+    schedule = catalog.generate_graph(program)
 
     dotfile = os.path.splitext(os.path.basename(filename))[0] + ".dot"
     with open(dotfile, "w", encoding="utf8") as plan:
         print(schedule, file=plan)
+
+    pid = ProgramId(program)
+
+    app = QApplication(sys.argv)
+    tv = TermsView(catalog, pid)
+    tv.show()
+    sys.exit(app.exec())
 
 
 def make_reqs(filename: str):
@@ -83,10 +103,11 @@ def main():
     """Stubs for testing"""
     parser = ArgumentParser()
     parser.add_argument("-f", "--filename", type=str, default="cs.json")
+    parser.add_argument("-p", "--program", type=str, default=None)
     args = parser.parse_args()
 
     # test_output()
-    test_input(args.filename)
+    test_input(args.filename, args.program)
 
 
 if __name__ == "__main__":

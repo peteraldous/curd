@@ -48,9 +48,7 @@ class CatalogEncoder(json.JSONEncoder):
                 },
                 "programs": [
                     {
-                        program.p_id.name: [
-                            requirement.name for requirement in program.requirements
-                        ],
+                        program.p_id.name: [requirement.name for requirement in program.requirements],
                     }
                     for program in o.programs.values()
                 ],
@@ -60,10 +58,7 @@ class CatalogEncoder(json.JSONEncoder):
                 "terms_past": o.limits.terms_past,
                 "selections": [course.to_tuple() for course in o.selections],
                 "constraints": [
-                    [
-                        (left_course, op.value, right_course)
-                        for left_course, op, right_course in disjunction
-                    ]
+                    [(left_course, op.value, right_course) for left_course, op, right_course in disjunction]
                     for disjunction in o.constraints
                 ],
             }
@@ -77,9 +72,7 @@ def catalog_hook(dct: dict[str, Any]):
         try:
             requirements = {Requirement(req) for req in dct["requirements"]}
             req_deps = {
-                Requirement(post_name): {
-                    Requirement(pre_name) for pre_name in pre_names
-                }
+                Requirement(post_name): {Requirement(pre_name) for pre_name in pre_names}
                 for (post_name, pre_names) in dct["req_deps"].items()
             }
             courses = {}
@@ -87,9 +80,7 @@ def catalog_hook(dct: dict[str, Any]):
                 c_id = CourseId(dept, number)
                 courses[c_id] = Course(c_id, title, creds)
             course_reqs = {
-                Requirement(req_name): {
-                    CourseId(dept, number) for (dept, number) in courses
-                }
+                Requirement(req_name): {CourseId(dept, number) for (dept, number) in courses}
                 for (req_name, courses) in dct["course_reqs"].items()
             }
             programs = {}
@@ -104,10 +95,7 @@ def catalog_hook(dct: dict[str, Any]):
             )
             selections = {CourseId.from_tuple(t) for t in dct.get("selections", set())}
             constraints: list[set[Tuple[str, Op, str | int]]] = [
-                {
-                    (str(CourseId.from_tuple(lhs)), Op(op), course_str_or_int(rhs))
-                    for lhs, op, rhs in disjunction
-                }
+                {(str(CourseId.from_tuple(lhs)), Op(op), course_str_or_int(rhs)) for lhs, op, rhs in disjunction}
                 for disjunction in dct.get("constraints", set())
             ]
             return Catalog(

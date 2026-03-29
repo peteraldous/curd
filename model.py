@@ -306,7 +306,7 @@ class Catalog:
             case str(name):
                 values = name.split()
                 assert len(values) == 2
-                (dept, course_number) = values
+                dept, course_number = values
                 return CourseId(dept, course_number)
             case (str(dept), str(course_number)):
                 return CourseId(dept, course_number)
@@ -360,29 +360,35 @@ class Catalog:
         req = Catalog._get_requirement(requirement)
         self.programs.setdefault(p_id, Program(p_id, set())).requirements.add(req)
 
-    def generate_schedule(self, p_id: str | ProgramId) -> pydot.Graph:
-        """Choose classes that satisfy the program's requirements (using
-        `Catalog.select_courses()`) and put them in a schedule with the
-        appropriate number of terms."""
+    def get_scheduler(self, p_id: str | ProgramId) -> antichains.Scheduler:
         required, electives = self.select_courses(p_id)
         courses = required | electives
-        prereqs = [
-            (str(before_id), str(after_id)) for (before_id, after_id) in self.build_courses_graph(courses).edges()
-        ]
+        prereqs = list(self.build_courses_graph(courses).edges())
 
-        def course_value(c_id: CourseId) -> Tuple[str, int]:
-            c = self.courses[c_id]
-            return str(c_id), c.creds
+        def course_value(c_id: CourseId) -> Tuple[CourseId, int]:
+            return c_id, self.courses[c_id].creds
 
-        scheduler = antichains.Scheduler(
+        return antichains.Scheduler(
             map(course_value, courses),
             prereqs,
             self.limits.terms,
             self.limits.term_credit_limit,
             self.limits.terms_past,
+            required,
             self.constraints,
         )
-        return self.dot(scheduler.generate_schedule(), required)
+
+    def generate_schedule(self, p_id: str | ProgramId) -> antichains.Schedule:
+        """Choose classes that satisfy the program's requirements (using
+        `Catalog.select_courses()`) and put them in a schedule with the
+        appropriate number of terms."""
+
+        scheduler = self.get_scheduler(p_id)
+        return scheduler.generate_schedule()
+
+    def generate_graph(self, p_id: str | ProgramId) -> pydot.Graph:
+        scheduler = self.get_scheduler(p_id)
+        return self.dot(scheduler.generate_schedule(), scheduler.required)
 
     def dot(
         self,
@@ -390,14 +396,14 @@ class Catalog:
         required: set[CourseId],
     ) -> pydot.Graph:
         graph = pydot.Dot("schedule", graph_type="digraph", compound="true", rankdir="LR")
-        nodes: dict[str, pydot.Node] = {}
-        terms: dict[str, int] = {}
+        nodes: dict[CourseId, pydot.Node] = {}
+        terms: dict[CourseId, int] = {}
         last = None
         for index, (total, classes) in enumerate(schedule.schedule):
             term = index + 1
             credit_total = 0
             for c in classes:
-                credit_total += self.courses[CourseId.from_str(c)].creds
+                credit_total += self.courses[c].creds
             subgraph = pydot.Subgraph(
                 f"cluster_term_{term}",
                 label=f"Term {term} ({credit_total})",
@@ -405,10 +411,9 @@ class Catalog:
             )
             graph.add_subgraph(subgraph)
             for c in sorted(classes):
-                c_id = CourseId.from_str(c)
                 terms[c] = term
-                nodes[c] = pydot.Node(c, shape="box")
-                if c_id not in required:
+                nodes[c] = pydot.Node(str(c), shape="box")
+                if c not in required:
                     nodes[c].set("style", "dashed")
                 subgraph.add_node(nodes[c])
             if last:
